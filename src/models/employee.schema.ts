@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 const Schema = new mongoose.Schema({
   moduleNumber: {
+    type: Number,
     default: 1,
   },
   name: {
@@ -72,5 +73,6 @@ Schema.methods.comparePassword = async function (enteredPassword: string) {
 
   return status;
 };
-const Employee = mongoose.model('Employee', Schema);
+// const Employee = mongoose.model('Employee', Schema);
+const Employee = Schema;
 export default Employee;
