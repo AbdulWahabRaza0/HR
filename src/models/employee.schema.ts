@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+const { ObjectId } = mongoose.Schema;
 const Schema = new mongoose.Schema({
   moduleNumber: {
     type: Number,
@@ -57,6 +58,12 @@ const Schema = new mongoose.Schema({
     default: 0,
     enum: [0, 1],
   },
+  CRID: [
+    {
+      type: ObjectId,
+      ref: 'CorrectionReq',
+    },
+  ],
 });
 //to save the password
 Schema.pre('save', async function (next) {

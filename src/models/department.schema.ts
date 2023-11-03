@@ -29,11 +29,10 @@ const Schema = new mongoose.Schema({
       'Please add a valid email',
     ],
   },
-  employers: [
+  EID: [
     {
       type: ObjectId,
       ref: 'Employee',
-      required: true,
     },
   ],
 });
