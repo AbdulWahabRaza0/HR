@@ -64,6 +64,12 @@ const Schema = new mongoose.Schema({
       ref: 'CorrectionReq',
     },
   ],
+  DESGID: [
+    {
+      type: ObjectId,
+      ref: 'Designation',
+    },
+  ],
 });
 //to save the password
 Schema.pre('save', async function (next) {
