@@ -66,4 +66,24 @@ export class EmployeeController {
       throw new Error('Invalid Error');
     }
   }
+  @Post('login')
+  async login(@Req() req: any, @Res() res: any) {
+    const { email, password } = req.body;
+    try {
+      if (!email || !password) {
+        res.status(401);
+        throw new Error('Insufficient credentials');
+      }
+      const user = await this.Employee.findOne({ email });
+      if (!user || !(await user.comparePassword(password))) {
+        res.status(401);
+        throw new Error('Unauthorized users');
+      }
+      return res.status(200).json(user);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error(e);
+    }
+  }
 }
