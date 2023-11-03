@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot('mongodb://localhost:27017/', {
+    MongooseModule.forRoot(process.env.DB, {
       dbName: 'HRV2',
       connectionFactory: (connection) => {
         connection.on('connected', () => {
