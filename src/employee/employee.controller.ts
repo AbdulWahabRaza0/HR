@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
 import { Model } from 'mongoose';
@@ -17,6 +17,53 @@ export class EmployeeController {
     } catch (e) {
       console.log(e);
       res.status(500).json(e);
+    }
+  }
+  @Post('register')
+  async register(@Req() req: any, @Res() res: any) {
+    const {
+      name,
+      fatherName,
+      cnic,
+      profileImg,
+      contact,
+      emergencyContact,
+      email,
+      password,
+      role = 0,
+      moduleAccess,
+    } = req.body;
+    try {
+      if (
+        !name ||
+        !fatherName ||
+        !cnic ||
+        !contact ||
+        !emergencyContact ||
+        !email ||
+        !password
+      ) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const newEmployee = await this.Employee.create({
+        name,
+        fatherName,
+        cnic,
+        profileImg,
+        contact,
+        emergencyContact,
+        email,
+        password,
+        role,
+        moduleAccess,
+      });
+      await newEmployee.save();
+      res.status(201).json(newEmployee);
+    } catch (e) {
+      console.log(e);
+      res.status(401);
+      throw new Error('Invalid Error');
     }
   }
 }

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import * as mongoose from 'mongoose';
+import * as bcrypt from 'bcrypt';
 const { ObjectId } = mongoose.Schema;
 const Schema = new mongoose.Schema({
   moduleNumber: {
