@@ -34,7 +34,7 @@ export class EmployeeController {
   @Post('register')
   @UseGuards(JwtAuthGuard)
   async register(
-    @Req() req: Request,
+    @Req() req: any,
     @Res() res: Response,
     @Body() body: CreateUserDto,
   ) {
@@ -63,12 +63,12 @@ export class EmployeeController {
         res.status(404);
         throw new Error('Insufficient data');
       }
-      // console.log('This is requested user ', req.user);
-      //replace false with variable which define current acess as admin
-      if (false && role === 1 && moduleAccess?.length <= 0) {
-        res.status(404);
-        throw new Error('Admin has not provided any permission to sub admin');
+      const fetchedUser = await this.employeeService.findUserByReq(req);
+      if (!fetchedUser) {
+        res.status(401);
+        new UnauthorizedException();
       }
+
       const newEmployee = await this.Employee.create({
         name,
         fatherName,
