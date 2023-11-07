@@ -10,5 +10,6 @@ import Employee from 'src/models/employee.schema';
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService],
+  exports: [EmployeeService],
 })
 export class EmployeeModule {}
