@@ -73,6 +73,6 @@ export class IdQuery {
   @IsString()
   readonly contact: string;
 }
-export class UpdateQueryRequestDto {
+export class IdQueryRequestDto {
   id: IdQuery;
 }

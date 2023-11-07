@@ -17,7 +17,7 @@ import {
   CreateUserDto,
   AuthUserDto,
   UpdateUserRequestDto,
-  UpdateQueryRequestDto,
+  IdQueryRequestDto,
 } from './employee.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
@@ -134,11 +134,11 @@ export class EmployeeController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
-  async update(
+  async updateEmp(
     @Req() req: any,
     @Res() res: Response,
     @Body() body: UpdateUserRequestDto,
-    @Query() query: UpdateQueryRequestDto,
+    @Query() query: IdQueryRequestDto,
   ) {
     try {
       const { id } = query;
@@ -151,6 +151,27 @@ export class EmployeeController {
         new: true,
       });
       res.status(201).json(updatedUser);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error(e);
+    }
+  }
+  @Put('delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteEmp(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    try {
+      const { id } = query;
+      if (!id) {
+        res.status(401);
+        throw new Error('Insiffient data');
+      }
+      const deletedUser = await this.Employee.findByIdAndDelete(id);
+      res.status(201).json(deletedUser);
     } catch (e) {
       console.log(e);
       res.status(500);
