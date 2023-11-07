@@ -1,6 +1,8 @@
-import { Controller, Get, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, Body } from '@nestjs/common';
+import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
+import { CreateUserDto, AuthUserDto } from './employee.dtos';
 import { Model } from 'mongoose';
 @Controller('employee')
 export class EmployeeController {
@@ -10,7 +12,7 @@ export class EmployeeController {
   ) {}
 
   @Get()
-  async all(@Req() req: any, @Res() res: any) {
+  async all(@Req() req: Request, @Res() res: Response) {
     try {
       const myEmployee = await this.Employee.find({});
       return res.status(200).json({ myEmployee });
@@ -20,7 +22,11 @@ export class EmployeeController {
     }
   }
   @Post('register')
-  async register(@Req() req: any, @Res() res: any) {
+  async register(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: CreateUserDto,
+  ) {
     const {
       name,
       fatherName,
@@ -32,7 +38,7 @@ export class EmployeeController {
       password,
       role = 0,
       moduleAccess,
-    } = req.body;
+    } = body;
     try {
       if (
         !name ||
@@ -45,6 +51,11 @@ export class EmployeeController {
       ) {
         res.status(404);
         throw new Error('Insufficient data');
+      }
+      //replace false with variable which define current acess as admin
+      if (false && role === 1 && moduleAccess?.length <= 0) {
+        res.status(404);
+        throw new Error('Admin has not provided any permission to sub admin');
       }
       const newEmployee = await this.Employee.create({
         name,
@@ -67,8 +78,12 @@ export class EmployeeController {
     }
   }
   @Post('login')
-  async login(@Req() req: any, @Res() res: any) {
-    const { email, password } = req.body;
+  async login(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: AuthUserDto,
+  ) {
+    const { email, password } = body;
     try {
       if (!email || !password) {
         res.status(401);
