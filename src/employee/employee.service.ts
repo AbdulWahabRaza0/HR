@@ -30,4 +30,30 @@ export class EmployeeService {
       return null;
     }
   }
+  async roleRulesToRegisterUser(
+    fetchedUser: any,
+    role: number,
+    moduleAccess: [],
+  ) {
+    //if user who requested to register new user belongs to lower class then throwing error
+    if (fetchedUser.role <= role) {
+      return {
+        status: false,
+        error: 'User has no permission to add this user',
+      };
+    }
+    //if admin has not provided any module access to sub admin
+    else if (
+      fetchedUser.role === 2 &&
+      role === 1 &&
+      moduleAccess?.length <= 0
+    ) {
+      return {
+        status: false,
+        error: 'Admin has not provided any module permission to sub admin',
+      };
+    } else {
+      return { status: true };
+    }
+  }
 }

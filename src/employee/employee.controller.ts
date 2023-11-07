@@ -66,9 +66,19 @@ export class EmployeeController {
       const fetchedUser = await this.employeeService.findUserByReq(req);
       if (!fetchedUser) {
         res.status(401);
-        new UnauthorizedException();
+        throw new UnauthorizedException();
       }
+      const obayedRules: any =
+        await this.employeeService.roleRulesToRegisterUser(
+          fetchedUser,
+          role,
+          moduleAccess,
+        );
 
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const newEmployee = await this.Employee.create({
         name,
         fatherName,

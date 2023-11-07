@@ -32,7 +32,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsArray()
-  readonly moduleAccess: string[];
+  readonly moduleAccess: [];
 }
 export class AuthUserDto {
   @IsEmail()
