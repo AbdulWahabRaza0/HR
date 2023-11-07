@@ -70,14 +70,9 @@ export class EmployeeController {
         res.status(404);
         throw new Error('Insufficient data');
       }
-      const fetchedUser = await this.employeeService.findUserByReq(req);
-      if (!fetchedUser) {
-        res.status(401);
-        throw new UnauthorizedException();
-      }
       const obayedRules: any =
         await this.employeeService.roleRulesToRegisterUser(
-          fetchedUser,
+          req,
           role,
           moduleAccess,
         );
@@ -122,7 +117,7 @@ export class EmployeeController {
       const user = await this.Employee.findOne({ email });
       if (!user || !(await user.comparePassword(password))) {
         res.status(401);
-        new UnauthorizedException();
+        throw new UnauthorizedException();
       }
       const myToken = await this.employeeService.generateJWT(user._id);
       return res.status(200).json({ user, myToken });
@@ -147,6 +142,14 @@ export class EmployeeController {
         res.status(401);
         throw new Error('Insiffient data');
       }
+      const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
+        req,
+        id,
+      );
+      if (!obayedRiles.status) {
+        res.status(401);
+        throw new Error(obayedRiles.error);
+      }
       const updatedUser = await this.Employee.findByIdAndUpdate(id, data, {
         new: true,
       });
@@ -169,6 +172,14 @@ export class EmployeeController {
       if (!id) {
         res.status(401);
         throw new Error('Insiffient data');
+      }
+      const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
+        req,
+        id,
+      );
+      if (!obayedRiles.status) {
+        res.status(401);
+        throw new Error(obayedRiles.error);
       }
       const deletedUser = await this.Employee.findByIdAndDelete(id);
       res.status(201).json(deletedUser);

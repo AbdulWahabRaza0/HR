@@ -30,30 +30,72 @@ export class EmployeeService {
       return null;
     }
   }
-  async roleRulesToRegisterUser(
-    fetchedUser: any,
-    role: number,
-    moduleAccess: [],
-  ) {
+  async roleRulesToRegisterUser(req: any, role: number, moduleAccess: []) {
     //if user who requested to register new user belongs to lower class then throwing error
-    if (fetchedUser.role <= role) {
+    try {
+      const fetchedUser = await this.findUserByReq(req);
+      if (!fetchedUser) {
+        return {
+          status: false,
+          error: 'Invalid Error',
+        };
+      }
+      if (fetchedUser.role <= role) {
+        return {
+          status: false,
+          error: 'User has no permission to add this user',
+        };
+      }
+      //if admin has not provided any module access to sub admin
+      else if (
+        fetchedUser.role === 2 &&
+        role === 1 &&
+        moduleAccess?.length <= 0
+      ) {
+        return {
+          status: false,
+          error: 'Admin has not provided any module permission to sub admin',
+        };
+      } else {
+        return { status: true };
+      }
+    } catch (e) {
+      console.log(e);
       return {
         status: false,
-        error: 'User has no permission to add this user',
+        message: 'Invalid Error',
       };
     }
-    //if admin has not provided any module access to sub admin
-    else if (
-      fetchedUser.role === 2 &&
-      role === 1 &&
-      moduleAccess?.length <= 0
-    ) {
-      return {
-        status: false,
-        error: 'Admin has not provided any module permission to sub admin',
-      };
-    } else {
-      return { status: true };
+  }
+  async roleRulesToUpdateUser(req: any, id: any) {
+    //if user who requested to register new user belongs to lower class then throwing error
+    try {
+      const fetchedUser = await this.findUserByReq(req);
+      if (!fetchedUser) {
+        return {
+          status: false,
+          error: 'Invalid Error',
+        };
+      }
+      const myUser = await this.Employee.findById(id);
+      if (!myUser) {
+        return {
+          status: false,
+          error: 'User not found',
+        };
+      }
+      const role = myUser.role;
+      if (fetchedUser.role <= role) {
+        return {
+          status: false,
+          error: 'User has no permission to manipulate this user',
+        };
+      } else {
+        return { status: true };
+      }
+    } catch (e) {
+      console.log(e);
+      return { status: false, error: 'Invalid Error' };
     }
   }
 }
