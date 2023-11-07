@@ -1,4 +1,4 @@
-export const Roles = ['worker', 'subAdmin', 'admin', 'superAdmin'];
+export const Roles = ['employee', 'subAdmin', 'admin', 'superAdmin'];
 export const modules = [
   'department',
   'employee',
