@@ -21,6 +21,7 @@ import {
 } from './employee.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
+import { modules } from '../utils/utils';
 @Controller('employee')
 export class EmployeeController {
   constructor(
@@ -75,6 +76,7 @@ export class EmployeeController {
           req,
           role,
           moduleAccess,
+          modules.indexOf('employee'),
         );
 
       if (!obayedRules.status) {
@@ -145,6 +147,7 @@ export class EmployeeController {
       const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
         req,
         id,
+        modules.indexOf('employee'),
       );
       if (!obayedRiles.status) {
         res.status(401);
@@ -176,6 +179,7 @@ export class EmployeeController {
       const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
         req,
         id,
+        modules.indexOf('employee'),
       );
       if (!obayedRiles.status) {
         res.status(401);

@@ -33,8 +33,8 @@ export class DepartmentController {
       throw new Error('Invalid Error');
     }
   }
-  @Post('regsiter')
-  @UseGuards(JwtAuthGuard)
+  @Post('register')
+  // @UseGuards(JwtAuthGuard)
   async register(
     @Req() req: any,
     @Res() res: Response,
