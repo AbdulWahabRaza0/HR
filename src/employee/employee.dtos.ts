@@ -41,3 +41,38 @@ export class AuthUserDto {
   @IsString()
   readonly password: string;
 }
+export class UpdateUserDto {
+  @IsOptional()
+  @IsString()
+  readonly name: string;
+
+  @IsOptional()
+  @IsString()
+  readonly fatherName: string;
+
+  @IsOptional()
+  @IsString()
+  readonly cnic: string;
+
+  @IsOptional()
+  @IsString()
+  readonly profileImg: string;
+
+  @IsOptional()
+  @IsString()
+  readonly contact: string;
+
+  @IsOptional()
+  @IsString()
+  readonly emergencyContact: string;
+}
+export class UpdateUserRequestDto {
+  data: [UpdateUserDto];
+}
+export class IdQuery {
+  @IsString()
+  readonly contact: string;
+}
+export class UpdateQueryRequestDto {
+  id: IdQuery;
+}

@@ -2,16 +2,23 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Req,
   Res,
   Body,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
-import { CreateUserDto, AuthUserDto } from './employee.dtos';
+import {
+  CreateUserDto,
+  AuthUserDto,
+  UpdateUserRequestDto,
+  UpdateQueryRequestDto,
+} from './employee.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
 @Controller('employee')
@@ -119,6 +126,31 @@ export class EmployeeController {
       }
       const myToken = await this.employeeService.generateJWT(user._id);
       return res.status(200).json({ user, myToken });
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error(e);
+    }
+  }
+  @Put('update')
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: UpdateUserRequestDto,
+    @Query() query: UpdateQueryRequestDto,
+  ) {
+    try {
+      const { id } = query;
+      const { data } = body;
+      if (!id || data.length <= 0) {
+        res.status(401);
+        throw new Error('Insiffient data');
+      }
+      const updatedUser = await this.Employee.findByIdAndUpdate(id, data, {
+        new: true,
+      });
+      res.status(201).json(updatedUser);
     } catch (e) {
       console.log(e);
       res.status(500);
