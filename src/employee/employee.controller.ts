@@ -14,6 +14,7 @@ import {
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
+import { DepartmentService } from 'src/department/department.service';
 import {
   CreateUserDto,
   AuthUserDto,
@@ -30,6 +31,7 @@ export class EmployeeController {
   constructor(
     @InjectModel('Employee') private Employee: Model<any>,
     private readonly employeeService: EmployeeService,
+    private readonly departmentService: DepartmentService,
   ) {}
 
   @Get()
@@ -59,9 +61,10 @@ export class EmployeeController {
       email,
       password,
       role = 0,
+      did,
     } = body;
     let { moduleAccess }: any = body;
-    if (moduleAccess.length > 1) {
+    if (moduleAccess?.length > 1) {
       moduleAccess =
         this.employeeService.removeDuplicatesFromModuleAccessArray(
           moduleAccess,
@@ -75,11 +78,18 @@ export class EmployeeController {
         !contact ||
         !emergencyContact ||
         !email ||
-        !password
+        !password ||
+        !did
       ) {
         res.status(404);
         throw new Error('Insufficient data');
       }
+      const myDept = await this.departmentService.giveMyDept(did);
+      if (!myDept) {
+        res.status(404);
+        throw new Error('associated Department not found');
+      }
+
       const obayedRules: any =
         await this.employeeService.roleRulesToRegisterUser(
           req,
@@ -105,7 +115,8 @@ export class EmployeeController {
         moduleAccess: role === Roles.indexOf('subAdmin') ? moduleAccess : [],
       });
       await newEmployee.save();
-
+      await myDept.EID.push(newEmployee._id);
+      await myDept.save();
       res.status(201).json({ newEmployee });
     } catch (e) {
       console.log(e);

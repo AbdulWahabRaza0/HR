@@ -9,6 +9,15 @@ export class DepartmentService {
     @InjectModel('Department') private Department: Model<any>,
     private employeeService: EmployeeService,
   ) {}
+  async giveMyDept(id: string) {
+    try {
+      const myDept = await this.Department.findById(id);
+      return myDept;
+    } catch (e) {
+      console.log(e);
+      throw new Error('Invalid error');
+    }
+  }
   async roleRulesDepartment(req: any, moduleNumber: number) {
     //if user who requested to register new user belongs to lower class then throwing error
     try {
