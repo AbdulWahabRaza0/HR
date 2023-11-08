@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Req,
   Res,
   Body,
@@ -171,7 +172,7 @@ export class EmployeeController {
       throw new Error(e);
     }
   }
-  @Put('delete')
+  @Delete('delete')
   @UseGuards(JwtAuthGuard)
   async deleteEmp(
     @Req() req: any,
