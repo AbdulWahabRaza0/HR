@@ -44,21 +44,28 @@ export class DepartmentController {
     @Body() body: CreateDeptDto,
   ) {
     const { name, email, contact, profileImg } = body;
-    if (!name || !email || !contact) {
-      res.status(404);
-      throw new Error('Insufficient details');
-    }
-    const obayedRules: any =
-      await this.departmentService.roleRulesToRegisterDepartment(
+    try {
+      if (!name || !email || !contact) {
+        res.status(404);
+        throw new Error('Insufficient details');
+      }
+      //check for unique epartment
+      const checkforDuplicate = await this.Department.findOne({ name });
+      if (checkforDuplicate) {
+        res.status(404);
+        throw new Error('Department already exists');
+      }
+      //check for user role access
+      const obayedRules: any = await this.departmentService.roleRulesDepartment(
         req,
         modules.indexOf('department'),
       );
 
-    if (!obayedRules.status) {
-      res.status(401);
-      throw new Error(obayedRules.error);
-    }
-    try {
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      //adding new department
       const newDep = await this.Department.create({
         name,
         email,
@@ -73,6 +80,7 @@ export class DepartmentController {
     }
   }
   @Put('update')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Req() req: any,
     @Res() res: Response,
@@ -86,6 +94,17 @@ export class DepartmentController {
         res.status(401);
         throw new Error('Insiffient data');
       }
+      //check for user role access
+      const obayedRules: any = await this.departmentService.roleRulesDepartment(
+        req,
+        modules.indexOf('department'),
+      );
+
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      //updating department data
       const updateDept = await this.Department.findByIdAndUpdate(id, data, {
         new: true,
       });

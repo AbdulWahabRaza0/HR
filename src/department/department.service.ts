@@ -9,7 +9,7 @@ export class DepartmentService {
     @InjectModel('Department') private Department: Model<any>,
     private employeeService: EmployeeService,
   ) {}
-  async roleRulesToRegisterDepartment(req: any, moduleNumber: number) {
+  async roleRulesDepartment(req: any, moduleNumber: number) {
     //if user who requested to register new user belongs to lower class then throwing error
     try {
       const fetchedUser = await this.employeeService.findUserByReq(req);
