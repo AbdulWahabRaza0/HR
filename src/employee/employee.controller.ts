@@ -18,7 +18,8 @@ import {
   AuthUserDto,
   UpdateUserRequestDto,
   IdQueryRequestDto,
-  StatusRequestDto,
+  ModuleAccessRequestDto,
+  RoleRequestDto,
 } from './employee.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
@@ -205,7 +206,7 @@ export class EmployeeController {
   async changeModuleAccess(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: StatusRequestDto,
+    @Body() body: ModuleAccessRequestDto,
     @Query() query: IdQueryRequestDto,
   ) {
     const { id } = query;

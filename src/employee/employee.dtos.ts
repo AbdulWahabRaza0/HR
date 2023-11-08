@@ -4,7 +4,7 @@ import {
   IsOptional,
   IsInt,
   IsArray,
-  // IsNumber,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -83,7 +83,11 @@ export class IdQuery {
 export class IdQueryRequestDto {
   id: IdQuery;
 }
-export class StatusRequestDto {
+export class ModuleAccessRequestDto {
   @IsArray()
   readonly moduleAccess: [];
+}
+export class RoleRequestDto {
+  @IsNumber()
+  readonly role: number;
 }
