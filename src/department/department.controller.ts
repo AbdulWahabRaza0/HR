@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Req,
   Res,
   Body,
@@ -81,7 +82,7 @@ export class DepartmentController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
-  async update(
+  async updateDept(
     @Req() req: any,
     @Res() res: Response,
     @Body() body: UpdateDeptRequestDto,
@@ -109,6 +110,38 @@ export class DepartmentController {
         new: true,
       });
       res.status(201).json(updateDept);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Delete('delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteDept(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    const { id } = query;
+    try {
+      if (!id) {
+        res.status(401);
+        throw new Error('Insiffient data');
+      }
+      //check for user role access
+      const obayedRules: any = await this.departmentService.roleRulesDepartment(
+        req,
+        modules.indexOf('department'),
+      );
+
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      //updating department data
+      const delDept = await this.Department.findByIdAndDelete(id);
+      res.status(201).json(delDept);
     } catch (e) {
       console.log(e);
       res.status(500);
