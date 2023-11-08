@@ -7,7 +7,6 @@ import {
   Res,
   Body,
   Query,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
@@ -69,6 +68,30 @@ export class DepartmentController {
       return res.status(201).json(newDep);
     } catch (e) {
       console.log(e);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Put('update')
+  async update(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { id } = query;
+    const { data } = body;
+    try {
+      if (!id || data.length <= 0) {
+        res.status(401);
+        throw new Error('Insiffient data');
+      }
+      const updateDept = await this.Department.findByIdAndUpdate(id, data, {
+        new: data,
+      });
+      res.status(201).json(updateDept);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
       throw new Error('Invalid Error');
     }
   }
