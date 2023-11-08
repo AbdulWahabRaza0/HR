@@ -19,6 +19,7 @@ import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 import { UpdateDeptRequestDto, IdQueryRequestDto } from './department.dtos';
+import { IsBoolean } from 'class-validator';
 @Controller('department')
 export class DepartmentController {
   constructor(
@@ -94,6 +95,9 @@ export class DepartmentController {
       if (!id) {
         res.status(401);
         throw new Error('Insiffient data');
+      }
+      if (IsBoolean(data?.EID)) {
+        delete data.EID;
       }
       //check for user role access
       const obayedRules: any = await this.departmentService.roleRulesDepartment(

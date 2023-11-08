@@ -1,4 +1,4 @@
-import { IsString, IsEmail, IsOptional } from 'class-validator';
+import { IsString, IsEmail, IsOptional, IsArray } from 'class-validator';
 
 export class CreateDeptDto {
   @IsString()
@@ -34,9 +34,13 @@ export class UpdateDeptDto {
   @IsOptional()
   @IsString()
   readonly emergencyContact: string;
+
+  @IsOptional()
+  @IsArray()
+  readonly EID: any;
 }
 export class UpdateDeptRequestDto {
-  data: { UpdateDeptDto };
+  data: { UpdateDeptDto; EID: any };
 }
 export class IdQuery {
   @IsString()
