@@ -148,7 +148,7 @@ export class EmployeeController {
     try {
       const { id } = query;
       const { data } = body;
-      if (!id || data.length <= 0) {
+      if (!id) {
         res.status(401);
         throw new Error('Insiffient data');
       }

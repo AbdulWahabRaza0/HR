@@ -74,7 +74,7 @@ export class UpdateUserDto {
   readonly emergencyContact: string;
 }
 export class UpdateUserRequestDto {
-  data: [UpdateUserDto];
+  data: { UpdateUserDto };
 }
 export class IdQuery {
   @IsString()

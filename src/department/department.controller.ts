@@ -17,6 +17,7 @@ import { CreateDeptDto } from './department.dtos';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
+import { UpdateDeptRequestDto, IdQueryRequestDto } from './department.dtos';
 @Controller('department')
 export class DepartmentController {
   constructor(
@@ -75,18 +76,18 @@ export class DepartmentController {
   async update(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: UpdateDeptRequestDto,
+    @Query() query: IdQueryRequestDto,
   ) {
     const { id } = query;
     const { data } = body;
     try {
-      if (!id || data.length <= 0) {
+      if (!id) {
         res.status(401);
         throw new Error('Insiffient data');
       }
       const updateDept = await this.Department.findByIdAndUpdate(id, data, {
-        new: data,
+        new: true,
       });
       res.status(201).json(updateDept);
     } catch (e) {
