@@ -49,6 +49,9 @@ export class EmployeeService {
           error: 'Invalid Error',
         };
       }
+      //it is not allowed for lower class to register something
+      //there is a condition if sub admin is trying to register something
+      //then check for it's permissions
       if (
         fetchedUser.role <= role &&
         fetchedUser.role !== Roles.indexOf('subAdmin')
@@ -59,6 +62,7 @@ export class EmployeeService {
         };
       }
       //if admin has not provided any module access to sub admin
+      //if any admin tring to add subadmin the check for its module access
       else if (
         fetchedUser.role === Roles.indexOf('admin') &&
         role === Roles.indexOf('subAdmin') &&
@@ -68,7 +72,10 @@ export class EmployeeService {
           status: false,
           error: 'Admin has not provided any module permission to sub admin',
         };
-      } else if (
+      }
+      //if any sub admin trying to register any employee then
+      //check for it's permissions
+      else if (
         role === Roles.indexOf('employee') &&
         fetchedUser.role === Roles.indexOf('subAdmin')
       ) {
@@ -166,6 +173,8 @@ export class EmployeeService {
       //for role: added condition subadmin cannot change role
       //and requested role cannot be greater than the role of the
       //user who requested to change the role
+      //if feteched user role is sub admin and it is increasing to admin
+      //then vanish the all module access for him.
       //Module access:
       //only sub admin is allowed to gain modules access
       //requested user role should be greater than the role of the user.
