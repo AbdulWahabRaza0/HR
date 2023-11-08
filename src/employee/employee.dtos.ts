@@ -81,10 +81,15 @@ export class UpdateUserRequestDto {
 }
 export class IdQuery {
   @IsString()
-  readonly contact: string;
+  readonly id: string;
+}
+export class DIdQuery {
+  @IsString()
+  readonly did: string;
 }
 export class IdQueryRequestDto {
-  id: IdQuery;
+  id: string;
+  did: string;
 }
 export class ModuleAccessRequestDto {
   @IsArray()

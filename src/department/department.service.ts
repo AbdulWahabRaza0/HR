@@ -18,6 +18,19 @@ export class DepartmentService {
       throw new Error('Invalid error');
     }
   }
+  async remEmployeeFromDept(did: string, eid: string) {
+    try {
+      const remEmp = await this.Department.findByIdAndUpdate(
+        did,
+        { $pull: { EID: eid } },
+        { new: true },
+      );
+      return remEmp;
+    } catch (e) {
+      console.log(e);
+      throw new Error('Invalid error');
+    }
+  }
   async roleRulesDepartment(req: any, moduleNumber: number) {
     //if user who requested to register new user belongs to lower class then throwing error
     try {

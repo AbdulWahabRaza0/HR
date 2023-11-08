@@ -191,10 +191,15 @@ export class EmployeeController {
     @Query() query: IdQueryRequestDto,
   ) {
     try {
-      const { id } = query;
-      if (!id) {
+      const { id, did } = query;
+      if (!id || !did) {
         res.status(401);
         throw new Error('Insiffient data');
+      }
+      const myDept = this.departmentService.giveMyDept(did);
+      if (!myDept) {
+        res.status(401);
+        throw new Error('Department not exist');
       }
       const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
         req,
@@ -206,7 +211,11 @@ export class EmployeeController {
         throw new Error(obayedRiles.error);
       }
       const deletedUser = await this.Employee.findByIdAndDelete(id);
-      res.status(201).json(deletedUser);
+      const remEmpFromDept = await this.departmentService.remEmployeeFromDept(
+        did,
+        id,
+      );
+      res.status(201).json({ deletedUser, remEmpFromDept });
     } catch (e) {
       console.log(e);
       res.status(500);
