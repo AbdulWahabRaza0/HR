@@ -1,4 +1,11 @@
-import { IsString, IsEmail, IsOptional, IsInt, IsArray } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsInt,
+  IsArray,
+  // IsNumber,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -75,4 +82,8 @@ export class IdQuery {
 }
 export class IdQueryRequestDto {
   id: IdQuery;
+}
+export class StatusRequestDto {
+  @IsArray()
+  readonly moduleAccess: [];
 }

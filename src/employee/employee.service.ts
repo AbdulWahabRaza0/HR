@@ -15,6 +15,9 @@ export class EmployeeService {
       return '';
     }
   }
+  removeDuplicatesFromModuleAccessArray(arr?: []) {
+    return [...new Set(arr)];
+  }
   async findUserByReq(req: any) {
     try {
       if (!req.user.userId) {
@@ -134,6 +137,39 @@ export class EmployeeService {
     } catch (e) {
       console.log(e);
       return { status: false, error: 'Invalid Error' };
+    }
+  }
+  async roleRuleToChangeRoleOrModuleAccess(req: any, id: any) {
+    try {
+      const fetchedUser = await this.findUserByReq(req);
+      if (!fetchedUser) {
+        return {
+          status: false,
+          error: 'Invalid Error',
+        };
+      }
+      const myUser = await this.Employee.findById(id);
+      if (!myUser) {
+        return {
+          status: false,
+          error: 'User not found',
+        };
+      }
+      const role = myUser.role;
+      // console.log("This is my role")
+      if (fetchedUser.role <= role || role !== Roles.indexOf('subAdmin')) {
+        return {
+          status: false,
+          error: 'User has no permission to manipulate this user',
+        };
+      } else {
+        return {
+          status: true,
+        };
+      }
+    } catch (e) {
+      console.log(e);
+      throw new Error('invalid Error');
     }
   }
 }

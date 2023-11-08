@@ -18,10 +18,11 @@ import {
   AuthUserDto,
   UpdateUserRequestDto,
   IdQueryRequestDto,
+  StatusRequestDto,
 } from './employee.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
-import { modules } from '../utils/utils';
+import { Roles, modules } from '../utils/utils';
 @Controller('employee')
 export class EmployeeController {
   constructor(
@@ -56,8 +57,14 @@ export class EmployeeController {
       email,
       password,
       role = 0,
-      moduleAccess,
     } = body;
+    let { moduleAccess }: any = body;
+    if (moduleAccess.length > 1) {
+      moduleAccess =
+        this.employeeService.removeDuplicatesFromModuleAccessArray(
+          moduleAccess,
+        );
+    }
     try {
       if (
         !name ||
@@ -93,7 +100,7 @@ export class EmployeeController {
         email,
         password,
         role,
-        moduleAccess,
+        moduleAccess: role === Roles.indexOf('subAdmin') ? moduleAccess : [],
       });
       await newEmployee.save();
 
@@ -144,14 +151,14 @@ export class EmployeeController {
         res.status(401);
         throw new Error('Insiffient data');
       }
-      const obayedRiles = await this.employeeService.roleRulesToUpdateUser(
+      const obayedRules = await this.employeeService.roleRulesToUpdateUser(
         req,
         id,
         modules.indexOf('employee'),
       );
-      if (!obayedRiles.status) {
+      if (!obayedRules.status) {
         res.status(401);
-        throw new Error(obayedRiles.error);
+        throw new Error(obayedRules.error);
       }
       const updatedUser = await this.Employee.findByIdAndUpdate(id, data, {
         new: true,
@@ -187,6 +194,49 @@ export class EmployeeController {
       }
       const deletedUser = await this.Employee.findByIdAndDelete(id);
       res.status(201).json(deletedUser);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error(e);
+    }
+  }
+  @Put('/module/access/change')
+  @UseGuards(JwtAuthGuard)
+  async changeModuleAccess(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: StatusRequestDto,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    const { id } = query;
+    let { moduleAccess }: any = body;
+    if (moduleAccess?.length > 1) {
+      moduleAccess =
+        this.employeeService.removeDuplicatesFromModuleAccessArray(
+          moduleAccess,
+        );
+    }
+    try {
+      if (!id || moduleAccess.length <= 0) {
+        res.status(404);
+        throw new Error('Insufficient Data');
+      }
+      const obayedRule =
+        await this.employeeService.roleRuleToChangeRoleOrModuleAccess(req, id);
+      if (!obayedRule.status) {
+        res.status(401);
+        throw new Error(obayedRule.error);
+      }
+
+      const newAccess = await this.Employee.findByIdAndUpdate(
+        id,
+        { moduleAccess },
+        {
+          new: true,
+        },
+      );
+
+      res.status(201).json(newAccess);
     } catch (e) {
       console.log(e);
       res.status(500);
