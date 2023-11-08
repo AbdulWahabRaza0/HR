@@ -71,6 +71,12 @@ const Schema = new mongoose.Schema({
       ref: 'Designation',
     },
   ],
+  EXID: [
+    {
+      type: ObjectId,
+      ref: 'Experience',
+    },
+  ],
 });
 //to save the password
 Schema.pre('save', async function (next) {

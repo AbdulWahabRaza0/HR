@@ -18,6 +18,7 @@ export class EmployeeService {
   removeDuplicatesFromModuleAccessArray(arr?: []) {
     return [...new Set(arr)];
   }
+
   async findUserByReq(req: any) {
     try {
       if (!req.user.userId) {
@@ -195,6 +196,15 @@ export class EmployeeService {
     } catch (e) {
       console.log(e);
       throw new Error('invalid Error');
+    }
+  }
+  async giveMyEmployee(id: any) {
+    try {
+      const thisIsMine = await this.Employee.findById(id);
+      return thisIsMine;
+    } catch (e) {
+      console.log(e);
+      return null;
     }
   }
 }

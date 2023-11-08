@@ -7,15 +7,19 @@ const Schema = new mongoose.Schema({
   },
   trainingName: {
     type: String,
+    required: true,
   },
   instituteName: {
     type: String,
+    required: true,
   },
   description: {
     type: String,
+    required: true,
   },
-  instituteDuration: {
+  tariningDuration: {
     type: String,
+    required: true,
   },
   outcomeDetails: {
     type: String,
