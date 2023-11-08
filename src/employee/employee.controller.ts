@@ -223,7 +223,12 @@ export class EmployeeController {
         throw new Error('Insufficient Data');
       }
       const obayedRule =
-        await this.employeeService.roleRuleToChangeRoleOrModuleAccess(req, id);
+        await this.employeeService.roleRuleToChangeRoleOrModuleAccess(
+          req,
+          id,
+          'module',
+          null,
+        );
       if (!obayedRule.status) {
         res.status(401);
         throw new Error(obayedRule.error);
@@ -232,6 +237,61 @@ export class EmployeeController {
       const newAccess = await this.Employee.findByIdAndUpdate(
         id,
         { moduleAccess },
+        {
+          new: true,
+        },
+      );
+
+      res.status(201).json(newAccess);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error(e);
+    }
+  }
+  @Put('/role/access/change')
+  @UseGuards(JwtAuthGuard)
+  async changeRoleAccess(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: RoleRequestDto,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    const { id } = query;
+    const { role } = body;
+
+    try {
+      if (!id) {
+        res.status(404);
+        throw new Error('Insufficient Data');
+      }
+      const obayedRule =
+        await this.employeeService.roleRuleToChangeRoleOrModuleAccess(
+          req,
+          id,
+          'role',
+          role,
+        );
+      if (!obayedRule.status) {
+        res.status(401);
+        throw new Error(obayedRule.error);
+      }
+      //added the rule if role is changing from sub admin to any other
+      //class then vanish it's module access.
+      const getCurrentUser = await this.Employee.findById(id);
+      let decideToVanish = false;
+      const myRole = getCurrentUser.role;
+      if (myRole !== role) {
+        if (myRole === Roles.indexOf('subAdmin')) {
+          decideToVanish = true;
+        }
+      }
+      const newAccess = await this.Employee.findByIdAndUpdate(
+        id,
+        {
+          role,
+          moduleAccess: decideToVanish ? [] : getCurrentUser.moduleAccess,
+        },
         {
           new: true,
         },

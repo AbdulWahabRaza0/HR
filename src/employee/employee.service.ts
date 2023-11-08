@@ -139,7 +139,13 @@ export class EmployeeService {
       return { status: false, error: 'Invalid Error' };
     }
   }
-  async roleRuleToChangeRoleOrModuleAccess(req: any, id: any) {
+  async roleRuleToChangeRoleOrModuleAccess(
+    req: any,
+    id: any,
+    moduleControl: string,
+    reqRole: any,
+  ) {
+    //here req role is for checking, if requested role is greater than current role then throw error
     try {
       const fetchedUser = await this.findUserByReq(req);
       if (!fetchedUser) {
@@ -156,8 +162,18 @@ export class EmployeeService {
         };
       }
       const role = myUser.role;
-      // console.log("This is my role")
-      if (fetchedUser.role <= role || role !== Roles.indexOf('subAdmin')) {
+      //Role:
+      //for role: added condition subadmin cannot change role
+      //and requested role cannot be greater than the role of the
+      //user who requested to change the role
+      //Module access:
+      //only sub admin is allowed to gain modules access
+      //requested user role should be greater than the role of the user.
+      if (
+        fetchedUser.role <= role || moduleControl === 'module'
+          ? role !== Roles.indexOf('subAdmin')
+          : role === Roles.indexOf('subAdmin') && reqRole >= fetchedUser.role
+      ) {
         return {
           status: false,
           error: 'User has no permission to manipulate this user',
