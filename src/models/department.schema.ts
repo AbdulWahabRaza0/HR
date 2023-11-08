@@ -1,9 +1,10 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 const { ObjectId } = mongoose.Schema;
 const Schema = new mongoose.Schema({
   moduleNumber: {
     type: Number,
     default: 0,
+    immutable: true,
   },
   name: {
     type: String,

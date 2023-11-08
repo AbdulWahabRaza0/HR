@@ -5,15 +5,14 @@ const Schema = new mongoose.Schema({
     default: 1,
     immutable: true,
   },
-  name: {
+  jobTitle: {
     type: String,
-    required: true,
-    default: '',
   },
-  deptName: {
+  companyName: {
     type: String,
-    required: true,
-    default: '',
+  },
+  companyContact: {
+    type: String,
   },
   salary: {
     type: Number,
@@ -21,5 +20,5 @@ const Schema = new mongoose.Schema({
     default: 0,
   },
 });
-const Designation = Schema;
-export default Designation;
+const PrevJobs = Schema;
+export default PrevJobs;

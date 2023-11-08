@@ -5,6 +5,7 @@ const Schema = new mongoose.Schema({
   moduleNumber: {
     type: Number,
     default: 1,
+    immutable: true,
   },
   name: {
     type: String,

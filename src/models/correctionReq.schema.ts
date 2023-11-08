@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 const Schema = new mongoose.Schema({
   moduleNumber: {
     type: Number,
     default: 2,
+    immutable: true,
   },
   subject: {
     type: String,
