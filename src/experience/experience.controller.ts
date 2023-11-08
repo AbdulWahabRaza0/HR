@@ -7,12 +7,14 @@ import {
   Res,
   Body,
   Query,
-  //   UseGuards,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EmployeeService } from '../employee/employee.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
+import { modules } from 'src/utils/utils';
 @Controller('employee/experience')
 export class ExperienceController {
   constructor(
@@ -20,7 +22,7 @@ export class ExperienceController {
     @InjectModel('Skills') private Skills: Model<any>,
     @InjectModel('PrevJobs') private PrevJobs: Model<any>,
     @InjectModel('Trainings') private Trainings: Model<any>,
-    private readonly experienceService: EmployeeService,
+    private readonly employeeService: EmployeeService,
   ) {}
   @Get()
   async allExperiences(@Req() req: Request, @Res() res: Response) {
@@ -34,6 +36,7 @@ export class ExperienceController {
     }
   }
   @Put('add')
+  @UseGuards(JwtAuthGuard)
   async addExperience(
     @Req() req: any,
     @Res() res: Response,
@@ -47,10 +50,18 @@ export class ExperienceController {
         res.status(404);
         throw new Error('Insufficient data');
       }
-      const mineEmp = await this.experienceService.giveMyEmployee(id);
+      const mineEmp = await this.employeeService.giveMyEmployee(id);
       if (!mineEmp) {
         res.status(404);
         throw new Error('My employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
       }
       if (mineEmp.EXID) {
         const wholeData = await mineEmp.populate({

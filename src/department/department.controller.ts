@@ -58,7 +58,7 @@ export class DepartmentController {
         throw new Error('Department already exists');
       }
       //check for user role access
-      const obayedRules: any = await this.departmentService.roleRulesDepartment(
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
         req,
         modules.indexOf('department'),
       );
@@ -100,7 +100,7 @@ export class DepartmentController {
         delete data.EID;
       }
       //check for user role access
-      const obayedRules: any = await this.departmentService.roleRulesDepartment(
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
         req,
         modules.indexOf('department'),
       );
@@ -134,7 +134,7 @@ export class DepartmentController {
         throw new Error('Insiffient data');
       }
       //check for user role access
-      const obayedRules: any = await this.departmentService.roleRulesDepartment(
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
         req,
         modules.indexOf('department'),
       );
