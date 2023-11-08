@@ -105,4 +105,96 @@ export class ExperienceController {
       throw new Error('Invalid Error');
     }
   }
+  @Put('edit/skill')
+  async editSkills(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { sid } = query;
+    const { skill } = body;
+    if (!sid || !skill) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const editedSkills = await this.Skills.findByIdAndUpdate(sid, skill, {
+        new: true,
+      });
+      if (!editedSkills) {
+        res.status(400);
+        throw new Error('Invalid Error');
+      }
+      res.status(201).json(editedSkills);
+    } catch (e) {
+      console.log(e);
+      res.status(400);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Put('edit/prevjob')
+  async editPrevJobs(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: any,
+  ) {
+    const { pjid } = query;
+    const { prevJob } = body;
+    if (!pjid || !prevJob) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const editedPrevJobs = await this.PrevJobs.findByIdAndUpdate(
+        pjid,
+        prevJob,
+        {
+          new: true,
+        },
+      );
+      if (!editedPrevJobs) {
+        res.status(400);
+        throw new Error('Invalid Error');
+      }
+      res.status(201).json(editedPrevJobs);
+    } catch (e) {
+      console.log(e);
+      res.status(400);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Put('edit/traning')
+  async editTrainings(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { tid } = query;
+    const { training } = body;
+    if (!tid || !training) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const editedTraining = await this.Trainings.findByIdAndUpdate(
+        tid,
+        training,
+        {
+          new: true,
+        },
+      );
+      if (!editedTraining) {
+        res.status(400);
+        throw new Error('Invalid Error');
+      }
+      res.status(201).json(editedTraining);
+    } catch (e) {
+      console.log(e);
+      res.status(400);
+      throw new Error('Invalid Error');
+    }
+  }
 }
