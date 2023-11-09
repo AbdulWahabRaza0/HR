@@ -9,6 +9,7 @@ import {
   Res,
   Body,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -65,7 +66,7 @@ export class CorrectionReqController {
       }
       const myCorrectionReq = await this.CorrectionReq.create(data);
       await myCorrectionReq.save();
-      myEmp.CRID = eid;
+      await myEmp.CRID.push(myCorrectionReq._id);
       await myEmp.save();
       res.status(201).json({ myEmp, myCorrectionReq });
     } catch (e) {
@@ -106,6 +107,41 @@ export class CorrectionReqController {
       );
       await myCorrectionReq.save();
       res.status(201).json(myCorrectionReq);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Delete('/delete')
+  async deleteCorrection(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    try {
+      const { eid, crid } = query;
+      if (!eid || !crid) {
+        res.status(401);
+        throw new Error('Insufficient data');
+      }
+      const myEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!myEmp) {
+        res.status(404);
+        throw new Error('Employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('correctionReq'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const myCorrectionReq = await this.CorrectionReq.findByIdAndDelete(crid);
+      const remEmpFromDept =
+        await this.employeeService.remCorrectionreqFromEmployee(eid, crid);
+      res.status(201).json({ remEmpFromDept, myCorrectionReq });
     } catch (e) {
       console.log(e);
       res.status(500);

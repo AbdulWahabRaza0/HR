@@ -251,4 +251,17 @@ export class EmployeeService {
       return null;
     }
   }
+  async remCorrectionreqFromEmployee(eid: string, crid: string) {
+    try {
+      const remCorrectionReq = await this.Employee.findByIdAndUpdate(
+        eid,
+        { $pull: { CRID: crid } },
+        { new: true },
+      );
+      return remCorrectionReq;
+    } catch (e) {
+      console.log(e);
+      throw new Error('Invalid error');
+    }
+  }
 }
