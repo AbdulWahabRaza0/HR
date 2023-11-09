@@ -4,7 +4,6 @@ import {
   //   Post,
   Put,
   Query,
-  //   Delete,
   Req,
   Res,
   Body,
@@ -114,6 +113,7 @@ export class CorrectionReqController {
     }
   }
   @Delete('/delete')
+  @UseGuards(JwtAuthGuard)
   async deleteCorrection(
     @Req() req: Request,
     @Res() res: Response,
