@@ -106,6 +106,7 @@ export class ExperienceController {
     }
   }
   @Put('edit/skill')
+  @UseGuards(JwtAuthGuard)
   async editSkills(
     @Req() req: any,
     @Res() res: Response,
@@ -119,6 +120,14 @@ export class ExperienceController {
       throw new Error('insufficient details');
     }
     try {
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const editedSkills = await this.Skills.findByIdAndUpdate(sid, skill, {
         new: true,
       });
@@ -134,6 +143,7 @@ export class ExperienceController {
     }
   }
   @Put('edit/prevjob')
+  @UseGuards(JwtAuthGuard)
   async editPrevJobs(
     @Req() req: any,
     @Res() res: Response,
@@ -147,6 +157,14 @@ export class ExperienceController {
       throw new Error('insufficient details');
     }
     try {
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const editedPrevJobs = await this.PrevJobs.findByIdAndUpdate(
         pjid,
         prevJob,
@@ -166,6 +184,7 @@ export class ExperienceController {
     }
   }
   @Put('edit/traning')
+  @UseGuards(JwtAuthGuard)
   async editTrainings(
     @Req() req: any,
     @Res() res: Response,
@@ -179,6 +198,14 @@ export class ExperienceController {
       throw new Error('insufficient details');
     }
     try {
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const editedTraining = await this.Trainings.findByIdAndUpdate(
         tid,
         training,
