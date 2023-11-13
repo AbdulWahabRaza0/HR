@@ -205,7 +205,7 @@ export class ExperienceController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('edit/traning')
+  @Put('edit/training')
   @UseGuards(JwtAuthGuard)
   async editTrainings(
     @Req() req: any,
@@ -240,6 +240,99 @@ export class ExperienceController {
         throw new Error('Invalid Error');
       }
       res.status(201).json(editedTraining);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('remove/skill')
+  @UseGuards(JwtAuthGuard)
+  async removeSkill(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    const { exid, skid } = query;
+    try {
+      if (!exid || !skid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const remSkill = await this.Skills.findOneAndDelete(skid);
+      if (remSkill) {
+        await this.Experience.findByIdAndUpdate(
+          exid,
+          {
+            $pull: { SKID: skid },
+          },
+          {
+            new: true,
+          },
+        );
+      }
+      res.status(201).json(remSkill);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('remove/prevjob')
+  @UseGuards(JwtAuthGuard)
+  async removePrevJob(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    const { exid, pjid } = query;
+    try {
+      if (!exid || !pjid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const removePrevJob = await this.PrevJobs.findOneAndDelete(pjid);
+      if (removePrevJob) {
+        await this.Experience.findByIdAndUpdate(
+          exid,
+          {
+            $pull: { PJID: pjid },
+          },
+          {
+            new: true,
+          },
+        );
+      }
+      res.status(201).json(removePrevJob);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('remove/training')
+  @UseGuards(JwtAuthGuard)
+  async removeTraining(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    const { exid, tid } = query;
+    try {
+      if (!exid || !tid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const removeTraining = await this.Trainings.findOneAndDelete(tid);
+      if (removeTraining) {
+        await this.Experience.findByIdAndUpdate(
+          exid,
+          {
+            $pull: { TRID: tid },
+          },
+          {
+            new: true,
+          },
+        );
+      }
+      res.status(201).json(removeTraining);
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');

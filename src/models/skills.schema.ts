@@ -7,11 +7,9 @@ const Schema = new mongoose.Schema({
   },
   skillName: {
     type: String,
-    required: true,
   },
   duration: {
     type: String,
-    required: true,
   },
 });
 const Skills = Schema;

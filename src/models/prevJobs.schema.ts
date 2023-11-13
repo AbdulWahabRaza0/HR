@@ -7,21 +7,17 @@ const Schema = new mongoose.Schema({
   },
   jobTitle: {
     type: String,
-    required: true,
   },
   companyName: {
     type: String,
-    required: true,
   },
   companyContact: {
     type: String,
-    required: true,
   },
   salary: {
     type: Number,
     double: true,
     default: 0,
-    required: true,
   },
 });
 const PrevJobs = Schema;
