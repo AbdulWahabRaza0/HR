@@ -34,8 +34,7 @@ export class DepartmentController {
       res.status(200).json(depts);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Post('register')
@@ -78,7 +77,7 @@ export class DepartmentController {
       return res.status(201).json(newDep);
     } catch (e) {
       console.log(e);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('update')
@@ -116,8 +115,7 @@ export class DepartmentController {
       res.status(201).json(updateDept);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Delete('delete')
@@ -148,8 +146,7 @@ export class DepartmentController {
       res.status(201).json(delDept);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
 }

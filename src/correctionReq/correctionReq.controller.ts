@@ -37,8 +37,7 @@ export class CorrectionReqController {
       res.status(200).json(all);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/me')
@@ -57,8 +56,7 @@ export class CorrectionReqController {
       res.status(200).json(myArr);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/add')
@@ -96,8 +94,7 @@ export class CorrectionReqController {
       res.status(201).json({ myEmp, myCorrectionReq });
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/update')
@@ -134,8 +131,7 @@ export class CorrectionReqController {
       res.status(201).json(myCorrectionReq);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Delete('/delete')
@@ -174,8 +170,7 @@ export class CorrectionReqController {
       res.status(201).json({ remEmpFromDept, myCorrectionReq });
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
 }

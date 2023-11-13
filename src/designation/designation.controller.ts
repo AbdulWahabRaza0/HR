@@ -37,8 +37,7 @@ export class DesignationController {
       res.status(200).json(fetchingDesignations);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/me')
@@ -52,8 +51,7 @@ export class DesignationController {
       res.status(200).json(mine);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('add')
@@ -93,8 +91,7 @@ export class DesignationController {
       res.status(201).json({ newDesignation, findingMyEmp });
     } catch (e) {
       console.log(e);
-      res.status(200);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('update')
@@ -132,8 +129,7 @@ export class DesignationController {
       res.status(201).json({ updateDesignation });
     } catch (e) {
       console.log(e);
-      res.status(200);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Delete('/delete')
@@ -170,8 +166,7 @@ export class DesignationController {
       res.status(201).json({ delDesignation });
     } catch (e) {
       console.log(e);
-      res.status(200);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
 }

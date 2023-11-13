@@ -43,8 +43,7 @@ export class ExperienceController {
       res.status(200).json(myExperiences);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/me')
@@ -58,8 +57,7 @@ export class ExperienceController {
       res.status(200).json(mine);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('add')
@@ -128,8 +126,7 @@ export class ExperienceController {
       res.status(201).json(wholeData);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('edit/skill')
@@ -165,8 +162,7 @@ export class ExperienceController {
       res.status(201).json(editedSkills);
     } catch (e) {
       console.log(e);
-      res.status(400);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('edit/prevjob')
@@ -206,8 +202,7 @@ export class ExperienceController {
       res.status(201).json(editedPrevJobs);
     } catch (e) {
       console.log(e);
-      res.status(400);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('edit/traning')
@@ -247,8 +242,7 @@ export class ExperienceController {
       res.status(201).json(editedTraining);
     } catch (e) {
       console.log(e);
-      res.status(400);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
 }

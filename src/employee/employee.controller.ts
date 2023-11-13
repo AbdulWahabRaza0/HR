@@ -126,8 +126,7 @@ export class EmployeeController {
       res.status(201).json({ newEmployee });
     } catch (e) {
       console.log(e);
-      res.status(401);
-      throw new Error('Invalid Error');
+      res.status(500).json('Invalid Error');
     }
   }
   @Post('login')
@@ -151,8 +150,7 @@ export class EmployeeController {
       return res.status(200).json({ user, myToken });
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('update')
@@ -185,8 +183,7 @@ export class EmployeeController {
       res.status(201).json(updatedUser);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Delete('delete')
@@ -257,8 +254,7 @@ export class EmployeeController {
       res.status(201).json({ deletedUser, remEmpFromDept });
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/module/access/change')
@@ -305,8 +301,7 @@ export class EmployeeController {
       res.status(201).json(newAccess);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
   @Put('/role/access/change')
@@ -360,8 +355,7 @@ export class EmployeeController {
       res.status(201).json(newAccess);
     } catch (e) {
       console.log(e);
-      res.status(500);
-      throw new Error(e);
+      res.status(500).json('Invalid Error');
     }
   }
 }
