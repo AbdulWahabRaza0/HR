@@ -129,6 +129,64 @@ export class ExperienceController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Put('update')
+  @UseGuards(JwtAuthGuard)
+  async updateExperience(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: AddExpReqDto,
+    @Query() query: any,
+  ) {
+    const { eid, exid } = query;
+    const { skills, prevJobs, trainings } = body;
+    try {
+      if (!eid || !exid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const mineEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!mineEmp) {
+        res.status(404);
+        throw new Error('My employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const myExperience = await this.Experience.findById(exid);
+      for (const skill of skills) {
+        const addSkill = await this.Skills.create(skill);
+        await addSkill.save();
+        myExperience.SKID.push(addSkill);
+      }
+      for (const training of trainings) {
+        const addTraining = await this.Trainings.create(training);
+        await addTraining.save();
+        myExperience.TRID.push(addTraining);
+      }
+      for (const prevJob of prevJobs) {
+        const addPrevJob = await this.PrevJobs.create(prevJob);
+        await addPrevJob.save();
+        myExperience.PJID.push(addPrevJob);
+      }
+      await myExperience.save();
+
+      const wholeData = await mineEmp.populate({
+        path: 'EXID',
+        populate: {
+          path: 'PJID TRID SKID',
+        },
+      });
+      res.status(201).json(wholeData);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
   @Put('edit/skill')
   @UseGuards(JwtAuthGuard)
   async editSkills(
