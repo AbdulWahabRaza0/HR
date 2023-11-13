@@ -83,9 +83,9 @@ export class CorrectionReqController {
     @Query() query: any,
   ) {
     try {
-      const { cqid } = query;
+      const { crid } = query;
       const { data } = body;
-      if (!cqid || !data) {
+      if (!crid || !data) {
         res.status(401);
         throw new Error('Insufficient data');
       }
@@ -98,7 +98,7 @@ export class CorrectionReqController {
         throw new Error(obayedRules.error);
       }
       const myCorrectionReq = await this.CorrectionReq.findByIdAndUpdate(
-        cqid,
+        crid,
         data,
         {
           new: true,

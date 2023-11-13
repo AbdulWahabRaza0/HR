@@ -7,6 +7,7 @@ import { EmployeeModule } from './employee/employee.module';
 import { ExperienceModule } from './experience/experience.module';
 import { DepartmentModule } from './department/department.module';
 import { CorrectionReqModule } from './correctionReq/correctionReq.module';
+import { DesignationModule } from './designation/designation.module';
 import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from './auth/auth.module';
     DepartmentModule,
     ExperienceModule,
     CorrectionReqModule,
+    DesignationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
