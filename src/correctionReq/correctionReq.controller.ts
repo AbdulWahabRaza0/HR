@@ -21,9 +21,21 @@ import {
   CRIDQueryRequestDto,
   ECRIDQueryRequestDto,
 } from './correctionReq.dtos';
+import {
+  ApiTags,
+  // ApiOperation,
+  // ApiOkResponse,
+  // ApiBadRequestResponse,
+  // ApiBody,
+  ApiBearerAuth,
+  // ApiResponse,
+  // ApiQuery,
+} from '@nestjs/swagger';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 @Controller('employee/correction/req')
+@ApiTags('Correction Req')
+@ApiBearerAuth('JWT')
 export class CorrectionReqController {
   constructor(
     @InjectModel('CorrectionReq') private CorrectionReq: Model<any>,

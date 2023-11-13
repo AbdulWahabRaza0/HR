@@ -26,10 +26,22 @@ import {
   ModuleAccessRequestDto,
   RoleRequestDto,
 } from './employee.dtos';
+import {
+  ApiTags,
+  // ApiOperation,
+  // ApiOkResponse,
+  // ApiBadRequestResponse,
+  // ApiBody,
+  ApiBearerAuth,
+  // ApiResponse,
+  // ApiQuery,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
 import { Roles, modules } from '../utils/utils';
 @Controller('employee')
+@ApiTags('Employee')
+@ApiBearerAuth('JWT')
 export class EmployeeController {
   constructor(
     @InjectModel('Employee') private Employee: Model<any>,

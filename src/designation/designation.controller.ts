@@ -21,9 +21,21 @@ import {
   DESGIdQueryReqDto,
   EDESGIdQueryReqDto,
 } from './designation.dtos';
+import {
+  ApiTags,
+  // ApiOperation,
+  // ApiOkResponse,
+  // ApiBadRequestResponse,
+  // ApiBody,
+  ApiBearerAuth,
+  // ApiResponse,
+  // ApiQuery,
+} from '@nestjs/swagger';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 @Controller('employee/designation')
+@ApiTags('Designation')
+@ApiBearerAuth('JWT')
 export class DesignationController {
   constructor(
     @InjectModel('Designation') private Designation: Model<any>,

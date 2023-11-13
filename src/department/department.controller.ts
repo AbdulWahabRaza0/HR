@@ -15,12 +15,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { DepartmentService } from './department.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { CreateDeptDto } from './department.dtos';
+import {
+  ApiTags,
+  // ApiOperation,
+  // ApiOkResponse,
+  // ApiBadRequestResponse,
+  // ApiBody,
+  ApiBearerAuth,
+  // ApiResponse,
+  // ApiQuery,
+} from '@nestjs/swagger';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 import { UpdateDeptRequestDto, IdQueryRequestDto } from './department.dtos';
 import { IsBoolean } from 'class-validator';
 @Controller('department')
+@ApiTags('Department')
+@ApiBearerAuth('JWT')
 export class DepartmentController {
   constructor(
     @InjectModel('Department') private Department: Model<any>,
