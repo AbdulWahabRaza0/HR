@@ -13,6 +13,16 @@ import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EmployeeService } from '../employee/employee.service';
+import {
+  AddExpReqDto,
+  SkillReqDto,
+  PrevJobReqDto,
+  TrainingReqDto,
+  SIdQueryRequestDto,
+  EIdQueryRequestDto,
+  PJIdQueryRequestDto,
+  TIdQueryRequestDto,
+} from './experience.dtos';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from 'src/utils/utils';
 @Controller('employee/experience')
@@ -40,8 +50,8 @@ export class ExperienceController {
   async addExperience(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: AddExpReqDto,
+    @Query() query: EIdQueryRequestDto,
   ) {
     const { id } = query;
     const { skills, prevJobs, trainings } = body;
@@ -110,8 +120,8 @@ export class ExperienceController {
   async editSkills(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: SkillReqDto,
+    @Query() query: SIdQueryRequestDto,
   ) {
     const { sid } = query;
     const { skill } = body;
@@ -147,8 +157,8 @@ export class ExperienceController {
   async editPrevJobs(
     @Req() req: any,
     @Res() res: Response,
-    @Query() query: any,
-    @Body() body: any,
+    @Query() query: PJIdQueryRequestDto,
+    @Body() body: PrevJobReqDto,
   ) {
     const { pjid } = query;
     const { prevJob } = body;
@@ -188,8 +198,8 @@ export class ExperienceController {
   async editTrainings(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: TrainingReqDto,
+    @Query() query: TIdQueryRequestDto,
   ) {
     const { tid } = query;
     const { training } = body;
