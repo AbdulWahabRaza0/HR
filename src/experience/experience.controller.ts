@@ -28,16 +28,19 @@ import {
   ApiTags,
   ApiOperation,
   ApiOkResponse,
-  ApiCreatedResponse,
+  // ApiCreatedResponse,
   ApiBadRequestResponse,
   ApiBody,
-  ApiNotFoundResponse,
+  // ApiNotFoundResponse,
   ApiBearerAuth,
+  ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from 'src/utils/utils';
 @Controller('employee/experience')
 @ApiTags('Experience')
+@ApiBearerAuth('JWT')
 export class ExperienceController {
   constructor(
     @InjectModel('Experience') private Experience: Model<any>,
@@ -96,6 +99,69 @@ export class ExperienceController {
   }
   @Put('add')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add experience for the authenticated user',
+    description:
+      'Add a new experience including skills, previous jobs, and trainings for the authenticated user.',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully added experience.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Insufficient data or My employee not found.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        skills: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              skillName: { type: 'string' },
+              duration: { type: 'string' },
+            },
+          },
+          description: 'Array of skills',
+        },
+        prevJobs: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              jobTitle: { type: 'string' },
+              companyName: { type: 'string' },
+              companyContact: { type: 'string' },
+              salary: { type: 'number' },
+            },
+          },
+          description: 'Array of previous jobs',
+        },
+        trainings: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              trainingName: { type: 'string' },
+              instituteName: { type: 'string' },
+              description: { type: 'string' },
+              tariningDuration: { type: 'string' },
+              outcomeDetails: { type: 'string' },
+            },
+          },
+          description: 'Array of trainings',
+        },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'id',
+    type: 'string',
+    description: 'The employee ID as a query parameter',
+    required: true,
+  })
   async addExperience(
     @Req() req: any,
     @Res() res: Response,
@@ -165,6 +231,73 @@ export class ExperienceController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update experience for the authenticated user',
+    description:
+      'Update the existing experience, including skills, previous jobs, and trainings for the authenticated user.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        skills: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              skillName: { type: 'string' },
+              duration: { type: 'string' },
+            },
+          },
+          description: 'Array of skills',
+        },
+        prevJobs: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              jobTitle: { type: 'string' },
+              companyName: { type: 'string' },
+              companyContact: { type: 'string' },
+              salary: { type: 'number' },
+            },
+          },
+          description: 'Array of previous jobs',
+        },
+        trainings: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              trainingName: { type: 'string' },
+              instituteName: { type: 'string' },
+              description: { type: 'string' },
+              tariningDuration: { type: 'string' },
+              outcomeDetails: { type: 'string' },
+            },
+          },
+          description: 'Array of trainings',
+        },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'eid',
+    type: 'string',
+    description: 'The employee ID',
+  })
+  @ApiQuery({
+    name: 'exid',
+    type: 'string',
+    description: 'The experience ID to be updated',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully updated experience.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Insufficient data or My employee not found.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async updateExperience(
     @Req() req: any,
     @Res() res: Response,
@@ -221,8 +354,39 @@ export class ExperienceController {
       res.status(500).json('Invalid Error');
     }
   }
+
   @Put('edit/skill')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Edit skills for the authenticated user',
+    description: 'Edit existing skills for the authenticated user.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        skill: {
+          type: 'object',
+          properties: {
+            skillName: { type: 'string' },
+            duration: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'sid',
+    type: 'string',
+    description: 'The skill ID to be edited',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully edited skills.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async editSkills(
     @Req() req: any,
     @Res() res: Response,
@@ -259,6 +423,41 @@ export class ExperienceController {
   }
   @Put('edit/prevjob')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Edit previous jobs for the authenticated user',
+    description: 'Edit existing previous jobs for the authenticated user.',
+  })
+  @ApiQuery({
+    name: 'pjid',
+    type: 'string',
+    description: 'The previous job ID to be edited',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        prevJob: {
+          type: 'object',
+          properties: {
+            jobTitle: { type: 'string' },
+            companyName: { type: 'string' },
+            companyContact: { type: 'string' },
+            salary: { type: 'number' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully edited previous jobs.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async editPrevJobs(
     @Req() req: any,
     @Res() res: Response,
@@ -299,6 +498,42 @@ export class ExperienceController {
   }
   @Put('edit/training')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Edit training details for the authenticated user',
+    description: 'Edit existing training details for the authenticated user.',
+  })
+  @ApiQuery({
+    name: 'tid',
+    type: 'string',
+    description: 'The training ID to be edited',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        training: {
+          type: 'object',
+          properties: {
+            trainingName: { type: 'string' },
+            instituteName: { type: 'string' },
+            description: { type: 'string' },
+            trainingDuration: { type: 'string' },
+            outcomeDetails: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully edited training details.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async editTrainings(
     @Req() req: any,
     @Res() res: Response,
@@ -339,6 +574,24 @@ export class ExperienceController {
   }
   @Put('remove/skill')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Remove skill for the authenticated user',
+    description:
+      'Remove a skill for the authenticated user by providing experience ID and skill ID.',
+  })
+  @ApiQuery({
+    name: 'exid',
+    type: 'string',
+    description: 'The experience ID for the authenticated user',
+  })
+  @ApiQuery({
+    name: 'skid',
+    type: 'string',
+    description: 'The skill ID to be removed',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully removed the skill.' })
+  @ApiResponse({ status: 404, description: 'Insufficient data.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async removeSkill(
     @Req() req: any,
     @Res() res: Response,
@@ -370,6 +623,27 @@ export class ExperienceController {
   }
   @Put('remove/prevjob')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Remove previous job for the authenticated user',
+    description:
+      'Remove a previous job for the authenticated user by providing experience ID and previous job ID.',
+  })
+  @ApiQuery({
+    name: 'exid',
+    type: 'string',
+    description: 'The experience ID for the authenticated user',
+  })
+  @ApiQuery({
+    name: 'pjid',
+    type: 'string',
+    description: 'The previous job ID to be removed',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully removed the previous job.',
+  })
+  @ApiResponse({ status: 404, description: 'Insufficient data.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async removePrevJob(
     @Req() req: any,
     @Res() res: Response,
@@ -401,6 +675,27 @@ export class ExperienceController {
   }
   @Put('remove/training')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Remove training for the authenticated user',
+    description:
+      'Remove a training for the authenticated user by providing experience ID and training ID.',
+  })
+  @ApiQuery({
+    name: 'exid',
+    type: 'string',
+    description: 'The experience ID for the authenticated user',
+  })
+  @ApiQuery({
+    name: 'tid',
+    type: 'string',
+    description: 'The training ID to be removed',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully removed the training.',
+  })
+  @ApiResponse({ status: 404, description: 'Insufficient data.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async removeTraining(
     @Req() req: any,
     @Res() res: Response,
@@ -432,6 +727,24 @@ export class ExperienceController {
   }
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete experience for the authenticated user',
+    description:
+      'Delete the experience, including skills, previous jobs, and trainings for the authenticated user.',
+  })
+  @ApiQuery({
+    name: 'eid',
+    type: 'string',
+    description: 'The employee ID for the authenticated user',
+  })
+  @ApiQuery({
+    name: 'exid',
+    type: 'string',
+    description: 'The experience ID to be deleted',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully deleted experience.' })
+  @ApiResponse({ status: 404, description: 'Insufficient details.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async deleteExperience(
     @Req() req: any,
     @Res() res: Response,

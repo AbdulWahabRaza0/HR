@@ -9,7 +9,7 @@ async function bootstrap() {
   });
   const port = process.env.PORT;
   const config = new DocumentBuilder()
-    .setTitle('HRML')
+    .setTitle('HRMS')
     .setDescription('These are the APIs belongs to HRMS Backend')
     .setVersion('1.0')
     .addTag('hrms')
