@@ -139,6 +139,10 @@ export class CorrectionReqController {
         throw new Error(obayedRules.error);
       }
       const myCorrectionReq = await this.CorrectionReq.findByIdAndDelete(crid);
+      if (!myCorrectionReq) {
+        res.status(401);
+        throw new Error('Operation unsuccessful');
+      }
       const remEmpFromDept =
         await this.employeeService.remCorrectionreqFromEmployee(eid, crid);
       res.status(201).json({ remEmpFromDept, myCorrectionReq });
