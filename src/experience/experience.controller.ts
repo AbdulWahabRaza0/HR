@@ -13,6 +13,7 @@ import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EmployeeService } from '../employee/employee.service';
+import { ExperienceService } from './exprience.service';
 import {
   AddExpReqDto,
   SkillReqDto,
@@ -33,6 +34,7 @@ export class ExperienceController {
     @InjectModel('PrevJobs') private PrevJobs: Model<any>,
     @InjectModel('Trainings') private Trainings: Model<any>,
     private readonly employeeService: EmployeeService,
+    private readonly experienceService: ExperienceService,
   ) {}
   @Get()
   async allExperiences(@Req() req: Request, @Res() res: Response) {
@@ -43,6 +45,18 @@ export class ExperienceController {
       console.log(e);
       res.status(500);
       throw new Error(e);
+    }
+  }
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  async myExperience(@Req() req: any, @Res() res: Response) {
+    try {
+      const mine = await this.experienceService.giveMyExperience(req._id);
+      res.status(200).json(mine);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error('Invalid Error');
     }
   }
   @Put('add')
