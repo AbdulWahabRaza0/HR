@@ -43,10 +43,10 @@ export class DesignationController {
     @Body() body: any,
     @Query() query: any,
   ) {
-    const { name, deptName, salary } = body;
+    const { data } = body;
     const { eid } = query;
     try {
-      if (!name || !deptName || !eid) {
+      if (!Boolean(data) || !eid) {
         res.status(404);
         throw new Error('Insufficient data');
       }
@@ -65,11 +65,7 @@ export class DesignationController {
         res.status(401);
         throw new Error(obayedRules.error);
       }
-      const newDesignation = await this.Designation.create({
-        name,
-        deptName,
-        salary,
-      });
+      const newDesignation = await this.Designation.create(data);
       await newDesignation.save();
       findingMyEmp.DESGID = newDesignation._id;
       await findingMyEmp.save();
