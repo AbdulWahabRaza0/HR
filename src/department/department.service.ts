@@ -18,6 +18,17 @@ export class DepartmentService {
       throw new Error('Invalid error');
     }
   }
+  async giveMyDeptByEmpId(eid: any) {
+    try {
+      const myDept = await this.Department.findOne({
+        EID: eid,
+      });
+      return myDept;
+    } catch (e) {
+      console.log(e);
+      throw new Error('Invalid error');
+    }
+  }
   async remEmployeeFromDept(did: string, eid: string) {
     try {
       const remEmp = await this.Department.findByIdAndUpdate(

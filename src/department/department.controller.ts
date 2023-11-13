@@ -37,6 +37,20 @@ export class DepartmentController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Get('/me')
+  @UseGuards(JwtAuthGuard)
+  async myDepartments(@Req() req: Request, @Res() res: Response) {
+    try {
+      const myExmployee = await this.employeeService.findUserByReq(req);
+      const mine = await this.departmentService.giveMyDeptByEmpId(
+        myExmployee._id,
+      );
+      res.status(200).json(mine);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
   @Post('register')
   @UseGuards(JwtAuthGuard)
   async register(

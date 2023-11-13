@@ -56,6 +56,7 @@ export class EmployeeController {
     @Req() req: any,
     @Res() res: Response,
     @Body() body: CreateUserDto,
+    @Query() query: IdQueryRequestDto,
   ) {
     const {
       name,
@@ -67,8 +68,8 @@ export class EmployeeController {
       email,
       password,
       role = 0,
-      did,
     } = body;
+    const { did } = query;
     let { moduleAccess }: any = body;
     if (moduleAccess?.length > 1) {
       moduleAccess =
