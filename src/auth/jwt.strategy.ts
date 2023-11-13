@@ -13,16 +13,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
   async validate(payload: any) {
-    try {
-      const myEmp = await this.employeeService.giveMyEmployee(payload.id);
-      if (myEmp.status === empStatus.indexOf('inactive')) {
-        throw new Error('Inactive user cannot request');
-      } else {
-        return { userId: payload.id };
-      }
-    } catch (e) {
-      console.log(e);
-      throw new Error('Middleware failed to validate');
-    }
+    return { userId: payload.id };
+    //   try {
+    //     const myEmp = await this.employeeService.giveMyEmployee(payload.id);
+    //     if (myEmp.status === empStatus.indexOf('inactive')) {
+    //       throw new Error('Inactive user cannot request');
+    //     } else {
+    //       return { userId: payload.id };
+    //     }
+    //   } catch (e) {
+    //     console.log(e);
+    //     throw new Error('Middleware failed to validate');
+    //   }
   }
 }
