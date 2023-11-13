@@ -15,6 +15,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { DesignationService } from './designation.service';
 import { EmployeeService } from 'src/employee/employee.service';
+import {
+  DesgReqDto,
+  EIdQueryReqDto,
+  DESGIdQueryReqDto,
+  EDESGIdQueryReqDto,
+} from './designation.dtos';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 @Controller('employee/designation')
@@ -40,8 +46,8 @@ export class DesignationController {
   async addDesignation(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: DesgReqDto,
+    @Query() query: EIdQueryReqDto,
   ) {
     const { data } = body;
     const { eid } = query;
@@ -81,8 +87,8 @@ export class DesignationController {
   async updateDesignation(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: DesgReqDto,
+    @Query() query: DESGIdQueryReqDto,
   ) {
     const { data } = body;
     const { desgId } = query;
@@ -120,8 +126,7 @@ export class DesignationController {
   async deleteDesignation(
     @Req() req: any,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Query() query: EDESGIdQueryReqDto,
   ) {
     const { eid, desgId } = query;
     try {
