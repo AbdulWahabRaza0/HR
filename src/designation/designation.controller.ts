@@ -80,4 +80,43 @@ export class DesignationController {
       throw new Error('Invalid Error');
     }
   }
+  @Put('update')
+  @UseGuards(JwtAuthGuard)
+  async updateDesignation(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { data } = body;
+    const { desgId } = query;
+    try {
+      if (!Boolean(data) || !desgId) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const updateDesignation = await this.Designation.findByIdAndUpdate(
+        desgId,
+        data,
+        {
+          new: true,
+        },
+      );
+
+      res.status(201).json({ updateDesignation });
+    } catch (e) {
+      console.log(e);
+      res.status(200);
+      throw new Error('Invalid Error');
+    }
+  }
 }
