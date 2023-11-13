@@ -2,12 +2,12 @@ import {
   Controller,
   Get,
   Put,
-  //   Delete,
   Req,
   Res,
   Body,
   Query,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -391,6 +391,50 @@ export class ExperienceController {
         );
       }
       res.status(201).json(removeTraining);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Delete('delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteExperience(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    const { eid, exid } = query;
+    try {
+      if (!exid) {
+        res.status(404);
+        throw new Error('Insufficient details');
+      }
+      const myEmp = await this.employeeService.giveMyEmployee(eid);
+      if (myEmp && exid) {
+        const myExperience =
+          await this.experienceService.giveMyExperience(exid);
+        if (myExperience) {
+          if (myExperience?.PJID.length > 0) {
+            for (const pjid of myExperience.PJID) {
+              await this.experienceService.delMyPrevJob(pjid);
+            }
+          }
+          if (myExperience?.TRID.length > 0) {
+            for (const tid of myExperience.TRID) {
+              await this.experienceService.delMyTraining(tid);
+            }
+          }
+          if (myExperience?.SKID.length > 0) {
+            for (const skid of myExperience.SKID) {
+              await this.experienceService.delMySkill(skid);
+            }
+          }
+          await this.experienceService.delMyExperience(exid);
+        }
+        myEmp.EXID = null;
+        await myEmp.save();
+      }
+      res.status(201).json({ myEmp });
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');
