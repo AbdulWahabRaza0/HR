@@ -47,11 +47,14 @@ export class ExperienceController {
       throw new Error(e);
     }
   }
-  @Get('/me')
+  @Put('/me')
   @UseGuards(JwtAuthGuard)
   async myExperience(@Req() req: any, @Res() res: Response) {
     try {
-      const mine = await this.experienceService.giveMyExperience(req._id);
+      const myExmployee = await this.employeeService.findUserByReq(req);
+      const mine = await this.experienceService.giveMyExperience(
+        myExmployee.EXID,
+      );
       res.status(200).json(mine);
     } catch (e) {
       console.log(e);
