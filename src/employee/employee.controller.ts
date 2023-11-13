@@ -359,4 +359,80 @@ export class EmployeeController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Put('/status/inactive')
+  @UseGuards(JwtAuthGuard)
+  async changeInactiveStatus(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: RoleRequestDto,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    const { id } = query;
+
+    try {
+      if (!id) {
+        res.status(404);
+        throw new Error('Insufficient Data');
+      }
+      const obayedRule = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRule.status) {
+        res.status(401);
+        throw new Error(obayedRule.error);
+      }
+      const changeMyStatus = await this.Employee.findByIdAndUpdate(
+        id,
+        {
+          status: 1,
+        },
+        {
+          new: true,
+        },
+      );
+      res.status(201).json(changeMyStatus);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('/status/active')
+  @UseGuards(JwtAuthGuard)
+  async changeActiveStatus(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: RoleRequestDto,
+    @Query() query: IdQueryRequestDto,
+  ) {
+    const { id } = query;
+
+    try {
+      if (!id) {
+        res.status(404);
+        throw new Error('Insufficient Data');
+      }
+      const obayedRule = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRule.status) {
+        res.status(401);
+        throw new Error(obayedRule.error);
+      }
+      const changeMyStatus = await this.Employee.findByIdAndUpdate(
+        id,
+        {
+          status: 0,
+        },
+        {
+          new: true,
+        },
+      );
+      res.status(201).json(changeMyStatus);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
 }
