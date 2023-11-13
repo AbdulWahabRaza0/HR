@@ -7,16 +7,16 @@ import {
   Req,
   Res,
   Body,
-  //   UseGuards,
+  UseGuards,
   //   Delete,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
-// import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { DesignationService } from './designation.service';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
-// import { modules } from 'src/utils/utils';
+import { modules } from 'src/utils/utils';
 @Controller('employee/designation')
 export class DesignationController {
   constructor(
@@ -36,6 +36,7 @@ export class DesignationController {
     }
   }
   @Put('add')
+  @UseGuards(JwtAuthGuard)
   async addDesignation(
     @Req() req: any,
     @Res() res: Response,
@@ -54,6 +55,15 @@ export class DesignationController {
       if (!findingMyEmp) {
         res.status(404);
         throw new Error('Employee not found');
+      }
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
       }
       const newDesignation = await this.Designation.create({
         name,
