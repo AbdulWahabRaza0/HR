@@ -3,12 +3,20 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
   const port = process.env.PORT;
   const config = new DocumentBuilder()
-    .setTitle('HRMS')
-    .setDescription('The is swagger documentation related to the NEST APIs')
+    .setTitle('HRML')
+    .setDescription('These are the APIs belongs to HRMS Backend')
     .setVersion('1.0')
-    .addTag('HRMS')
+    .addTag('hrms')
+    .addBearerAuth(
+      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+      'JWT',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

@@ -24,9 +24,20 @@ import {
   PJIdQueryRequestDto,
   TIdQueryRequestDto,
 } from './experience.dtos';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiOkResponse,
+  ApiCreatedResponse,
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiNotFoundResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from 'src/utils/utils';
 @Controller('employee/experience')
+@ApiTags('Experience')
 export class ExperienceController {
   constructor(
     @InjectModel('Experience') private Experience: Model<any>,
@@ -37,6 +48,20 @@ export class ExperienceController {
     private readonly experienceService: ExperienceService,
   ) {}
   @Get()
+  @ApiOperation({
+    summary: 'Get all experiences',
+    description: 'Retrieve all experiences.',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Successfully retrieved experiences.',
+    type: Object,
+    isArray: true,
+  })
+  @ApiBadRequestResponse({
+    status: 500,
+    description: 'Invalid Error',
+  })
   async allExperiences(@Req() req: Request, @Res() res: Response) {
     try {
       const myExperiences = await this.Experience.find({});
@@ -48,6 +73,15 @@ export class ExperienceController {
   }
   @Put('/me')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get my experience',
+    description: 'Retrieve the experience of the currently authenticated user.',
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Successfully retrieved my experience.',
+  })
+  @ApiBadRequestResponse({ status: 500, description: 'Internal Server Error.' })
   async myExperience(@Req() req: any, @Res() res: Response) {
     try {
       const myExmployee = await this.employeeService.findUserByReq(req);
