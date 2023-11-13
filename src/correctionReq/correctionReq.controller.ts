@@ -15,6 +15,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { CorrectionReqService } from './correctionReq.service';
 import { EmployeeService } from 'src/employee/employee.service';
+import {
+  CorrectionReqRequestDto,
+  EIdQueryRequestDto,
+  CRIDQueryRequestDto,
+  ECRIDQueryRequestDto,
+} from './correctionReq.dtos';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
 @Controller('employee/correction/req')
@@ -40,8 +46,8 @@ export class CorrectionReqController {
   async addCorrection(
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: CorrectionReqRequestDto,
+    @Query() query: EIdQueryRequestDto,
   ) {
     try {
       const { eid } = query;
@@ -79,8 +85,8 @@ export class CorrectionReqController {
   async updateCorrection(
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: any,
-    @Query() query: any,
+    @Body() body: CorrectionReqRequestDto,
+    @Query() query: CRIDQueryRequestDto,
   ) {
     try {
       const { crid } = query;
@@ -117,7 +123,7 @@ export class CorrectionReqController {
   async deleteCorrection(
     @Req() req: Request,
     @Res() res: Response,
-    @Query() query: any,
+    @Query() query: ECRIDQueryRequestDto,
   ) {
     try {
       const { eid, crid } = query;
