@@ -8,7 +8,7 @@ import {
   Res,
   Body,
   UseGuards,
-  //   Delete,
+  Delete,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -113,6 +113,45 @@ export class DesignationController {
       );
 
       res.status(201).json({ updateDesignation });
+    } catch (e) {
+      console.log(e);
+      res.status(200);
+      throw new Error('Invalid Error');
+    }
+  }
+  @Delete('/delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteDesignation(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { eid, desgId } = query;
+    try {
+      if (!desgId || !eid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const findingMyEmp: any = await this.employeeService.giveMyEmployee(eid);
+
+      if (!findingMyEmp) {
+        res.status(404);
+        throw new Error('Employee not found');
+      }
+      const obayedRules: any = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const delDesignation = await this.Designation.findByIdAndDelete(desgId);
+      findingMyEmp.DESGID = null;
+      await findingMyEmp.save();
+      res.status(201).json({ delDesignation });
     } catch (e) {
       console.log(e);
       res.status(200);
