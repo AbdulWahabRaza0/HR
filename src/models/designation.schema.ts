@@ -7,12 +7,10 @@ const Schema = new mongoose.Schema({
   },
   name: {
     type: String,
-    required: true,
     default: '',
   },
   deptName: {
     type: String,
-    required: true,
     default: '',
   },
   salary: {

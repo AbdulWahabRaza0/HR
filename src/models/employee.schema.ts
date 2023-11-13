@@ -65,12 +65,10 @@ const Schema = new mongoose.Schema({
       ref: 'CorrectionReq',
     },
   ],
-  DESGID: [
-    {
-      type: ObjectId,
-      ref: 'Designation',
-    },
-  ],
+  DESGID: {
+    type: ObjectId,
+    ref: 'Designation',
+  },
   EXID: [
     {
       type: ObjectId,

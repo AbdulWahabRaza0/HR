@@ -3,7 +3,7 @@ import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DesignationController } from './designation.controller';
 import { DesignationService } from './designation.service';
-import Designation from '../models/department.schema';
+import Designation from '../models/designation.schema';
 import { EmployeeModule } from 'src/employee/employee.module';
 
 @Module({

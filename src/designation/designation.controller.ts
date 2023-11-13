@@ -2,11 +2,11 @@ import {
   Controller,
   Get,
   //   Post,
-  //   Put,
-  //   Query,
+  Put,
+  Query,
   Req,
   Res,
-  //   Body,
+  Body,
   //   UseGuards,
   //   Delete,
 } from '@nestjs/common';
@@ -33,6 +33,41 @@ export class DesignationController {
       console.log(e);
       res.status(500);
       throw new Error(e);
+    }
+  }
+  @Put('add')
+  async addDesignation(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+    @Query() query: any,
+  ) {
+    const { name, deptName, salary } = body;
+    const { eid } = query;
+    try {
+      if (!name || !deptName || !eid) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const findingMyEmp: any = await this.employeeService.giveMyEmployee(eid);
+
+      if (!findingMyEmp) {
+        res.status(404);
+        throw new Error('Employee not found');
+      }
+      const newDesignation = await this.Designation.create({
+        name,
+        deptName,
+        salary,
+      });
+      await newDesignation.save();
+      findingMyEmp.DESGID = newDesignation._id;
+      await findingMyEmp.save();
+      res.status(201).json({ newDesignation, findingMyEmp });
+    } catch (e) {
+      console.log(e);
+      res.status(200);
+      throw new Error('Invalid Error');
     }
   }
 }
