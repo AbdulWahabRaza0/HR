@@ -41,6 +41,26 @@ export class CorrectionReqController {
       throw new Error('Invalid Error');
     }
   }
+  @Put('/me')
+  @UseGuards(JwtAuthGuard)
+  async myCorrectionReq(@Req() req: any, @Res() res: Response) {
+    try {
+      const myExmployee = await this.employeeService.findUserByReq(req);
+      const myArr = [];
+      if (myExmployee.CRID.length > 0) {
+        for (const crid of myExmployee.CRID) {
+          const mine =
+            await this.correctionReqService.findMyCorrectionReq(crid);
+          myArr.push(mine);
+        }
+      }
+      res.status(200).json(myArr);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error('Invalid Error');
+    }
+  }
   @Put('/add')
   @UseGuards(JwtAuthGuard)
   async addCorrection(

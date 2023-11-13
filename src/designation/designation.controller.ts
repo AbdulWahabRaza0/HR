@@ -41,6 +41,21 @@ export class DesignationController {
       throw new Error(e);
     }
   }
+  @Put('/me')
+  @UseGuards(JwtAuthGuard)
+  async myDesignation(@Req() req: any, @Res() res: Response) {
+    try {
+      const myExmployee = await this.employeeService.findUserByReq(req);
+      const mine = await this.designationService.giveMyDesignation(
+        myExmployee.DESGID,
+      );
+      res.status(200).json(mine);
+    } catch (e) {
+      console.log(e);
+      res.status(500);
+      throw new Error('Invalid Error');
+    }
+  }
   @Put('add')
   @UseGuards(JwtAuthGuard)
   async addDesignation(
