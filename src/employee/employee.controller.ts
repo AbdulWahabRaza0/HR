@@ -15,6 +15,9 @@ import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
 import { DepartmentService } from 'src/department/department.service';
+import { ExperienceService } from 'src/experience/exprience.service';
+import { CorrectionReqService } from 'src/correctionReq/correctionReq.service';
+import { DesignationService } from 'src/designation/designation.service';
 import {
   CreateUserDto,
   AuthUserDto,
@@ -32,6 +35,9 @@ export class EmployeeController {
     @InjectModel('Employee') private Employee: Model<any>,
     private readonly employeeService: EmployeeService,
     private readonly departmentService: DepartmentService,
+    private readonly experienceService: ExperienceService,
+    private readonly correctionReqService: CorrectionReqService,
+    private readonly designationService: DesignationService,
   ) {}
 
   @Get()
@@ -215,6 +221,39 @@ export class EmployeeController {
         did,
         id,
       );
+      const exId = deletedUser.EXID;
+      const crIds = deletedUser.CRID;
+      const desgId = deletedUser.DESGID;
+      if (exId) {
+        const myExperience =
+          await this.experienceService.giveMyExperience(exId);
+        if (myExperience) {
+          if (myExperience?.PJID.length > 0) {
+            for (const pjid of myExperience.PJID) {
+              await this.experienceService.delMyPrevJob(pjid);
+            }
+          }
+          if (myExperience?.TRID.length > 0) {
+            for (const tid of myExperience.TRID) {
+              await this.experienceService.delMyTraining(tid);
+            }
+          }
+          if (myExperience?.SKID.length > 0) {
+            for (const skid of myExperience.SKID) {
+              await this.experienceService.delMySkill(skid);
+            }
+          }
+          await this.experienceService.delMyExperience(exId);
+        }
+      }
+      if (crIds.length > 0) {
+        for (const crId of crIds) {
+          await this.correctionReqService.delMyCorrectionReq(crId);
+        }
+      }
+      if (desgId) {
+        await this.designationService.delMyDesignation(desgId);
+      }
       res.status(201).json({ deletedUser, remEmpFromDept });
     } catch (e) {
       console.log(e);
