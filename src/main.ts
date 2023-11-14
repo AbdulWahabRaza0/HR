@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import fs from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
@@ -18,6 +19,7 @@ async function bootstrap() {
       'JWT',
     )
     .build();
+  //for json data use api-json
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   await app.listen(port, () => {

@@ -214,7 +214,7 @@ export class EmployeeService {
       if (fetchedUser.role === Roles.indexOf('employee')) {
         return {
           status: false,
-          error: 'user has no permission to register department',
+          error: 'user has no permission to perform operation',
         };
       }
       //if user belongs to sub admin then check the the permission
@@ -225,7 +225,7 @@ export class EmployeeService {
         } else {
           return {
             status: false,
-            error: 'sub admin has no permission to add department',
+            error: 'sub admin has no permission to perform  operation',
           };
         }
       }

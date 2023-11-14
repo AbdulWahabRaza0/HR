@@ -48,7 +48,6 @@ export class DepartmentController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved all departments.',
-    type: 'array',
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async allDepartments(@Req() req: Request, @Res() res: Response) {
@@ -71,7 +70,6 @@ export class DepartmentController {
     status: 200,
     description:
       'Successfully retrieved departments for the authenticated employee.',
-    type: 'object', // Assuming your response is an object representing employee departments
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async myDepartments(@Req() req: Request, @Res() res: Response) {
@@ -108,7 +106,6 @@ export class DepartmentController {
   @ApiResponse({
     status: 201,
     description: 'Successfully registered new department.',
-    type: 'object', // Define the properties of the response object
   })
   @ApiResponse({
     status: 401,
@@ -192,7 +189,6 @@ export class DepartmentController {
   @ApiResponse({
     status: 201,
     description: 'Successfully updated department information.',
-    type: 'object', // Define the properties of the response object
   })
   @ApiResponse({
     status: 401,
@@ -250,7 +246,6 @@ export class DepartmentController {
   @ApiResponse({
     status: 201,
     description: 'Successfully deleted department.',
-    type: 'object', // Define the properties of the response object
   })
   @ApiResponse({
     status: 401,

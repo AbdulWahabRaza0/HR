@@ -87,6 +87,7 @@ export class EmployeeController {
         contact: { type: 'string' },
         emergencyContact: { type: 'string' },
         email: { type: 'string' },
+        password: { type: 'string' },
         role: { type: 'number' },
         moduleAccess: { type: 'array', items: { type: 'number' } },
       },
@@ -199,14 +200,12 @@ export class EmployeeController {
         email: { type: 'string', description: 'Employee email' },
         password: { type: 'string', description: 'Employee password' },
       },
-      required: ['email', 'password'],
     },
     description: 'Credentials for employee authentication.',
   })
   @ApiResponse({
     status: 200,
     description: 'Successfully logged in.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -270,7 +269,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully updated employee information.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -329,7 +327,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully deleted employee information.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -415,12 +412,7 @@ export class EmployeeController {
     schema: {
       type: 'object',
       properties: {
-        data: {
-          type: 'object',
-          properties: {
-            moduleAccess: { type: 'array', items: { type: 'number' } },
-          },
-        },
+        moduleAccess: { type: 'array', items: { type: 'number' } },
       },
     },
     description:
@@ -435,7 +427,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully changed module access.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -515,7 +506,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully changed employee role and access.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -589,7 +579,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully changed employee inactive status.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,
@@ -647,7 +636,6 @@ export class EmployeeController {
   @ApiResponse({
     status: 201,
     description: 'Successfully changed employee active status.',
-    type: 'object',
   })
   @ApiResponse({
     status: 401,

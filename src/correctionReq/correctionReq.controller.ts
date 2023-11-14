@@ -50,7 +50,6 @@ export class CorrectionReqController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved all corrections.',
-    type: 'array', // Define the type of the response (array of correction objects)
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async allCorrections(@Req() req: Request, @Res() res: Response) {
@@ -72,7 +71,6 @@ export class CorrectionReqController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved correction requests.',
-    type: 'array', // Define the type of the response (array of correction objects)
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async myCorrectionReq(@Req() req: any, @Res() res: Response) {
@@ -107,7 +105,7 @@ export class CorrectionReqController {
           properties: {
             subject: { type: 'string' },
             description: { type: 'string' },
-            status: { type: 'string', enum: [0, 1, 2] },
+            status: { type: 'string' },
           },
         },
       },
@@ -121,7 +119,6 @@ export class CorrectionReqController {
   @ApiResponse({
     status: 201,
     description: 'Successfully added correction request.',
-    type: 'object', // Define the type of the response (object with employee and correction request details)
   })
   @ApiResponse({
     status: 401,
@@ -180,7 +177,7 @@ export class CorrectionReqController {
           properties: {
             subject: { type: 'string' },
             description: { type: 'string' },
-            status: { type: 'string', enum: [0, 1, 2] },
+            status: { type: 'number', enum: [0, 1, 2] },
           },
         },
       },
@@ -195,9 +192,6 @@ export class CorrectionReqController {
   @ApiResponse({
     status: 201,
     description: 'Successfully updated correction request.',
-    schema: {
-      type: 'object', // Define properties of the response object if needed
-    },
   })
   @ApiResponse({
     status: 401,
@@ -260,9 +254,6 @@ export class CorrectionReqController {
   @ApiResponse({
     status: 201,
     description: 'Successfully deleted correction request.',
-    schema: {
-      type: 'object', // Define properties of the response object if needed
-    },
   })
   @ApiResponse({
     status: 401,

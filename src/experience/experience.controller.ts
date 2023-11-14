@@ -56,8 +56,6 @@ export class ExperienceController {
   @ApiOkResponse({
     status: 200,
     description: 'Successfully retrieved experiences.',
-    type: Object,
-    isArray: true,
   })
   @ApiBadRequestResponse({
     status: 500,

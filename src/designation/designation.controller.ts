@@ -50,8 +50,6 @@ export class DesignationController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved designations.',
-    type: Object,
-    isArray: true,
   })
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async allDesignations(@Req() req: Request, @Res() res: Response) {
@@ -74,7 +72,6 @@ export class DesignationController {
   @ApiResponse({
     status: 200,
     description: 'Successfully retrieved my designation.',
-    type: Object,
   }) // Adjust the type based on your Designation model
   @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async myDesignation(@Req() req: any, @Res() res: Response) {
@@ -111,7 +108,7 @@ export class DesignationController {
       },
     },
   }) // Specify the request body DTO
-  @ApiQuery({ type: EIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO
+  @ApiQuery({ type: 'string', name: 'eid' }) // Specify the query parameter DTO
   @ApiResponse({ status: 201, description: 'Successfully added designation.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({
@@ -179,7 +176,7 @@ export class DesignationController {
       },
     },
   }) // Specify the request body DTO
-  @ApiQuery({ type: DESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO
+  @ApiQuery({ type: 'string', name: 'desgId' }) // Specify the query parameter DTO
   @ApiResponse({
     status: 201,
     description: 'Successfully updated designation.',
@@ -230,8 +227,8 @@ export class DesignationController {
     description: 'Delete the existing designation for the authenticated user.',
   })
   // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
-  @ApiQuery({ type: EDESGIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO for 'eid'
-  @ApiQuery({ type: EDESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO for 'desgId'
+  @ApiQuery({ type: 'string', name: 'eid' }) // Specify the query parameter DTO for 'eid'
+  @ApiQuery({ type: 'string', name: 'desgId' }) // Specify the query parameter DTO for 'desgId'
   @ApiResponse({
     status: 201,
     description: 'Successfully deleted designation.',
