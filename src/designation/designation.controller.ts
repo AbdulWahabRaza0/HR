@@ -96,7 +96,21 @@ export class DesignationController {
     description: 'Add a new designation for the authenticated user.',
   })
   // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
-  @ApiBody({ type: DesgReqDto }) // Specify the request body DTO
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            deptName: { type: 'string' },
+            salary: { type: 'number' },
+          },
+        },
+      },
+    },
+  }) // Specify the request body DTO
   @ApiQuery({ type: EIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO
   @ApiResponse({ status: 201, description: 'Successfully added designation.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
@@ -150,7 +164,21 @@ export class DesignationController {
     description: 'Update the existing designation for the authenticated user.',
   })
   // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
-  @ApiBody({ type: DesgReqDto }) // Specify the request body DTO
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            deptName: { type: 'string' },
+            salary: { type: 'number' },
+          },
+        },
+      },
+    },
+  }) // Specify the request body DTO
   @ApiQuery({ type: DESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO
   @ApiResponse({
     status: 201,
@@ -201,7 +229,7 @@ export class DesignationController {
     summary: 'Delete designation for the authenticated user',
     description: 'Delete the existing designation for the authenticated user.',
   })
-  @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
+  // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
   @ApiQuery({ type: EDESGIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO for 'eid'
   @ApiQuery({ type: EDESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO for 'desgId'
   @ApiResponse({
