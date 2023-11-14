@@ -71,6 +71,65 @@ export class EmployeeController {
       res.status(500).json(e);
     }
   }
+  @Post('my-super-admin')
+  async registerMyAdmin(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: any,
+  ) {
+    const {
+      name,
+      fatherName,
+      cnic,
+      profileImg,
+      contact,
+      emergencyContact,
+      email,
+      password,
+    } = body;
+    try {
+      if (
+        !name ||
+        !fatherName ||
+        !cnic ||
+        !contact ||
+        !emergencyContact ||
+        !email ||
+        !password
+      ) {
+        res.status(404);
+        throw new Error('Insufficient Details');
+      }
+      const isSAdminExists = await this.Employee.findOne({
+        role: Roles.indexOf('superAdmin'),
+      });
+      if (isSAdminExists) {
+        res.status(404);
+        throw new Error('Cannot register!');
+      }
+      const isEmpExists = await this.Employee.findOne({ email });
+      if (isEmpExists) {
+        res.status(404);
+        throw new Error('Email already exists');
+      }
+
+      const makeSAdmin = await this.Employee.create({
+        name,
+        fatherName,
+        cnic,
+        profileImg,
+        contact,
+        emergencyContact,
+        email,
+        password,
+        role: Roles.indexOf('superAdmin'),
+      });
+      res.status(201).json(makeSAdmin);
+    } catch (e) {
+      console.log(e);
+      res.status(401).json('Invalid Error');
+    }
+  }
   @Post('register')
   @ApiOperation({
     summary: 'Register a new employee',
