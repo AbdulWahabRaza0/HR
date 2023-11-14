@@ -31,10 +31,10 @@ import {
   ApiOperation,
   // ApiOkResponse,
   // ApiBadRequestResponse,
-  // ApiBody,
+  ApiBody,
   ApiBearerAuth,
   ApiResponse,
-  // ApiQuery,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { Model } from 'mongoose';
@@ -72,6 +72,42 @@ export class EmployeeController {
     }
   }
   @Post('register')
+  @ApiOperation({
+    summary: 'Register a new employee',
+    description: 'Create a new employee with the provided details.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        fatherName: { type: 'string' },
+        cnic: { type: 'string' },
+        profileImg: { type: 'string' },
+        contact: { type: 'string' },
+        emergencyContact: { type: 'string' },
+        email: { type: 'string' },
+        role: { type: 'number' },
+        moduleAccess: { type: 'array', items: { type: 'number' } },
+      },
+    },
+    description: 'Details of the new employee to be registered.',
+  })
+  @ApiQuery({
+    name: 'did',
+    type: 'string',
+    description: 'Department ID to associate the employee with.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully registered new employee.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Insufficient data or Associated Department not found.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   @UseGuards(JwtAuthGuard)
   async register(
     @Req() req: any,
@@ -152,6 +188,31 @@ export class EmployeeController {
     }
   }
   @Post('login')
+  @ApiOperation({
+    summary: 'Employee login',
+    description: 'Authenticate an employee with provided email and password.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string', description: 'Employee email' },
+        password: { type: 'string', description: 'Employee password' },
+      },
+      required: ['email', 'password'],
+    },
+    description: 'Credentials for employee authentication.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully logged in.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient credentials.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async login(
     @Req() req: Request,
     @Res() res: Response,
@@ -177,6 +238,45 @@ export class EmployeeController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update employee',
+    description: 'Update information for the authenticated employee.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            fatherName: { type: 'string' },
+            cnic: { type: 'string' },
+            profileImg: { type: 'string' },
+            contact: { type: 'string' },
+            emergencyContact: { type: 'string' },
+          },
+        },
+      },
+    },
+    description: 'Data for updating the employee information.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully updated employee information.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async updateEmp(
     @Req() req: any,
     @Res() res: Response,
@@ -210,6 +310,32 @@ export class EmployeeController {
   }
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete employee',
+    description: 'Delete information for the authenticated employee.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'did',
+    description: 'Department ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully deleted employee information.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async deleteEmp(
     @Req() req: any,
     @Res() res: Response,
@@ -281,6 +407,41 @@ export class EmployeeController {
   }
   @Put('/module/access/change')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Change module access',
+    description: 'Update module access for the authenticated employee.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            moduleAccess: { type: 'array', items: { type: 'number' } },
+          },
+        },
+      },
+    },
+    description:
+      'Data for changing module access for the employee. (please add all the modules access while increasing access)',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully changed module access.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async changeModuleAccess(
     @Req() req: any,
     @Res() res: Response,
@@ -328,6 +489,39 @@ export class EmployeeController {
   }
   @Put('/role/access/change')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Change employee role and access',
+    description: 'Change the role and access for the authenticated employee.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        role: {
+          type: 'number',
+          description: 'New role for the employee.',
+        },
+      },
+      required: ['role'],
+    },
+    description: 'Data for changing the employee role and access.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully changed employee role and access.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async changeRoleAccess(
     @Req() req: any,
     @Res() res: Response,
@@ -382,7 +576,27 @@ export class EmployeeController {
   }
   @Put('/status/inactive')
   @UseGuards(JwtAuthGuard)
-  async changeInactiveStatus(
+  @ApiOperation({
+    summary: 'Change employee to inactive status',
+    description: 'Change the inactive status for the authenticated employee.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully changed employee inactive status.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async changeToInactiveStatus(
     @Req() req: any,
     @Res() res: Response,
     @Body() body: RoleRequestDto,
@@ -420,7 +634,27 @@ export class EmployeeController {
   }
   @Put('/status/active')
   @UseGuards(JwtAuthGuard)
-  async changeActiveStatus(
+  @ApiOperation({
+    summary: 'Change employee active status',
+    description: 'Change the active status for the authenticated employee.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully changed employee active status.',
+    type: 'object',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async changeToActiveStatus(
     @Req() req: any,
     @Res() res: Response,
     @Body() body: RoleRequestDto,
