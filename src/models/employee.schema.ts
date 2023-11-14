@@ -82,7 +82,13 @@ Schema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
   }
 });
-
+// Exclude the 'password' field by default
+Schema.set('toJSON', {
+  transform: function (doc, ret) {
+    delete ret.password;
+    return ret;
+  },
+});
 //to compare password
 Schema.methods.comparePassword = async function (enteredPassword: string) {
   const status = await bcrypt.compare(enteredPassword, this.password);
