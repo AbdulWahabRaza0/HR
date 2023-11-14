@@ -28,12 +28,12 @@ import {
 } from './employee.dtos';
 import {
   ApiTags,
-  // ApiOperation,
+  ApiOperation,
   // ApiOkResponse,
   // ApiBadRequestResponse,
   // ApiBody,
   ApiBearerAuth,
-  // ApiResponse,
+  ApiResponse,
   // ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
@@ -53,6 +53,15 @@ export class EmployeeController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: 'Get all employees',
+    description: 'Retrieve all employees from the system.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all employees.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async all(@Req() req: Request, @Res() res: Response) {
     try {
       const myEmployee = await this.Employee.find({});

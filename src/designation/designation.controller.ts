@@ -23,13 +23,13 @@ import {
 } from './designation.dtos';
 import {
   ApiTags,
-  // ApiOperation,
+  ApiOperation,
   // ApiOkResponse,
   // ApiBadRequestResponse,
-  // ApiBody,
+  ApiBody,
   ApiBearerAuth,
-  // ApiResponse,
-  // ApiQuery,
+  ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Model } from 'mongoose';
 import { modules } from 'src/utils/utils';
@@ -43,6 +43,17 @@ export class DesignationController {
     private readonly designationService: DesignationService,
   ) {}
   @Get()
+  @ApiOperation({
+    summary: 'Get all designations',
+    description: 'Retrieve a list of all designations.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved designations.',
+    type: Object,
+    isArray: true,
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async allDesignations(@Req() req: Request, @Res() res: Response) {
     try {
       const fetchingDesignations = await this.Designation.find({});
@@ -54,6 +65,18 @@ export class DesignationController {
   }
   @Put('/me')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get my designation',
+    description:
+      'Retrieve the designation of the currently authenticated user.',
+  })
+  @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved my designation.',
+    type: Object,
+  }) // Adjust the type based on your Designation model
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async myDesignation(@Req() req: any, @Res() res: Response) {
     try {
       const myExmployee = await this.employeeService.findUserByReq(req);
@@ -68,6 +91,20 @@ export class DesignationController {
   }
   @Put('add')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add designation for the authenticated user',
+    description: 'Add a new designation for the authenticated user.',
+  })
+  // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
+  @ApiBody({ type: DesgReqDto }) // Specify the request body DTO
+  @ApiQuery({ type: EIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO
+  @ApiResponse({ status: 201, description: 'Successfully added designation.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 404,
+    description: 'Insufficient data or Employee not found.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async addDesignation(
     @Req() req: any,
     @Res() res: Response,
@@ -108,6 +145,20 @@ export class DesignationController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update designation for the authenticated user',
+    description: 'Update the existing designation for the authenticated user.',
+  })
+  // @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
+  @ApiBody({ type: DesgReqDto }) // Specify the request body DTO
+  @ApiQuery({ type: DESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully updated designation.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Insufficient data.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async updateDesignation(
     @Req() req: any,
     @Res() res: Response,
@@ -146,6 +197,20 @@ export class DesignationController {
   }
   @Delete('/delete')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete designation for the authenticated user',
+    description: 'Delete the existing designation for the authenticated user.',
+  })
+  @ApiBearerAuth() // Specify that this endpoint requires authentication using a bearer token
+  @ApiQuery({ type: EDESGIdQueryReqDto, name: 'eid' }) // Specify the query parameter DTO for 'eid'
+  @ApiQuery({ type: EDESGIdQueryReqDto, name: 'desgId' }) // Specify the query parameter DTO for 'desgId'
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully deleted designation.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 404, description: 'Insufficient data.' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async deleteDesignation(
     @Req() req: any,
     @Res() res: Response,
