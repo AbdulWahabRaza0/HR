@@ -17,13 +17,13 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { CreateDeptDto } from './department.dtos';
 import {
   ApiTags,
-  // ApiOperation,
+  ApiOperation,
   // ApiOkResponse,
   // ApiBadRequestResponse,
-  // ApiBody,
+  ApiBody,
   ApiBearerAuth,
-  // ApiResponse,
-  // ApiQuery,
+  ApiResponse,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
@@ -40,6 +40,17 @@ export class DepartmentController {
     private readonly employeeService: EmployeeService,
   ) {}
   @Get()
+  @Get()
+  @ApiOperation({
+    summary: 'Get all departments',
+    description: 'Retrieve a list of all departments.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved all departments.',
+    type: 'array',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async allDepartments(@Req() req: Request, @Res() res: Response) {
     try {
       const depts = await this.Department.find({});
@@ -51,6 +62,18 @@ export class DepartmentController {
   }
   @Get('/me')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get departments for the authenticated employee',
+    description:
+      'Retrieve departments associated with the authenticated employee.',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully retrieved departments for the authenticated employee.',
+    type: 'object', // Assuming your response is an object representing employee departments
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async myDepartments(@Req() req: Request, @Res() res: Response) {
     try {
       const myExmployee = await this.employeeService.findUserByReq(req);
@@ -65,6 +88,37 @@ export class DepartmentController {
   }
   @Post('register')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Register a new department',
+    description: 'Create a new department with the provided details.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string' },
+        email: { type: 'string' },
+        contact: { type: 'string' },
+        profileImg: { type: 'string' }, // Assuming profileImg is a string, update accordingly
+      },
+      required: ['name', 'email', 'contact'],
+    },
+    description: 'Details of the new department to be registered.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully registered new department.',
+    type: 'object', // Define the properties of the response object
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient details.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Insufficient details or Department already exists.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async register(
     @Req() req: any,
     @Res() res: Response,
@@ -108,6 +162,43 @@ export class DepartmentController {
   }
   @Put('update')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update department',
+    description: 'Update information for the authenticated department.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            email: { type: 'string' },
+            contact: { type: 'string' },
+            profileImg: { type: 'string' },
+          },
+        },
+      },
+    },
+    description: 'Data for updating the department information.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Department ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully updated department information.',
+    type: 'object', // Define the properties of the response object
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async updateDept(
     @Req() req: any,
     @Res() res: Response,
@@ -146,6 +237,26 @@ export class DepartmentController {
   }
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete department',
+    description: 'Delete the authenticated department.',
+  })
+  @ApiQuery({
+    name: 'id',
+    description: 'Department ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully deleted department.',
+    type: 'object', // Define the properties of the response object
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
   async deleteDept(
     @Req() req: any,
     @Res() res: Response,
