@@ -9,6 +9,7 @@ import { DepartmentModule } from './department/department.module';
 import { CorrectionReqModule } from './correctionReq/correctionReq.module';
 import { DesignationModule } from './designation/designation.module';
 import { AuthModule } from './auth/auth.module';
+import 'swagger-ui-dist';
 @Module({
   imports: [
     ConfigModule.forRoot(),
