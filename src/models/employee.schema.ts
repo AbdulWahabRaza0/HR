@@ -59,6 +59,7 @@ const Schema = new mongoose.Schema({
     default: 0,
     enum: [0, 1],
   },
+
   CRID: [
     {
       type: ObjectId,
@@ -72,6 +73,10 @@ const Schema = new mongoose.Schema({
   EXID: {
     type: ObjectId,
     ref: 'Experience',
+  },
+  TAID: {
+    type: ObjectId,
+    ref: 'TimeAndAttendance',
   },
 });
 //to save the password
