@@ -292,7 +292,9 @@ export class TANDAController {
       }
 
       const myAttendanceRegister = await this.TimeAndAttendance.findById(taid);
-      const myLeaveRequests = myAttendanceRegister.populate('LeaveReq') || null;
+      const myLeaveRequests = myAttendanceRegister.LRID
+        ? myAttendanceRegister.populate('LeaveReq')
+        : [];
       return res.status(200).json(myLeaveRequests);
     } catch (e) {
       console.log(e);
