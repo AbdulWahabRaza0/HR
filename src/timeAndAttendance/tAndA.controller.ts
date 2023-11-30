@@ -387,4 +387,44 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Delete('/leave/request/delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteLeaveRequest(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: any,
+  ) {
+    try {
+      const { taid, lrid } = query;
+
+      if (!req.user || !taid || !lrid) {
+        return res.status(401).json('Insufficient details');
+      }
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
+        req,
+        modules.indexOf('attendance'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+
+      const myAttendanceRegister =
+        await this.TimeAndAttendance.findByIdAndUpdate(taid, {
+          $pull: { LRID: lrid },
+        });
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+      const newLeaveReq = await this.LeaveReq.findByIdAndDelete(lrid, {
+        new: true,
+      });
+      return res.status(200).json(newLeaveReq);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
 }
