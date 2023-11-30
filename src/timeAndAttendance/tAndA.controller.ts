@@ -292,10 +292,96 @@ export class TANDAController {
       }
 
       const myAttendanceRegister = await this.TimeAndAttendance.findById(taid);
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
       const myLeaveRequests = myAttendanceRegister.LRID
-        ? myAttendanceRegister.populate('LeaveReq')
+        ? myAttendanceRegister.populate({
+            path: 'LeaveReq',
+            options: { strictPopulate: false },
+          })
         : [];
       return res.status(200).json(myLeaveRequests);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('/leave/request/add')
+  @UseGuards(JwtAuthGuard)
+  async addLeaveRequest(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: any,
+  ) {
+    try {
+      const { taid } = query;
+      const { subject, description, duration } = body;
+      if (!req.user || !taid || !subject || !description || !duration) {
+        return res.status(401).json('Insufficient details');
+      }
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
+        req,
+        modules.indexOf('attendance'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+
+      const myAttendanceRegister = await this.TimeAndAttendance.findById(taid);
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+      const newLeaveReq = await this.LeaveReq.create({
+        subject,
+        description,
+        duration,
+      });
+      await newLeaveReq.save();
+      myAttendanceRegister.LRID.push(newLeaveReq._id);
+      await myAttendanceRegister.save();
+      return res.status(200).json(myAttendanceRegister);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('/leave/request/edit')
+  @UseGuards(JwtAuthGuard)
+  async editLeaveRequest(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: any,
+  ) {
+    try {
+      const { taid, lrid } = query;
+      const { data } = body;
+      if (!req.user || !taid || !lrid || !data) {
+        return res.status(401).json('Insufficient details');
+      }
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
+        req,
+        modules.indexOf('attendance'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+
+      const myAttendanceRegister = await this.TimeAndAttendance.findById(taid);
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+      const newLeaveReq = await this.LeaveReq.findByIdAndUpdate(lrid, data, {
+        new: true,
+      });
+      return res.status(200).json(newLeaveReq);
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');

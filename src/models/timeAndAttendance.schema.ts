@@ -6,10 +6,12 @@ const Schema = new mongoose.Schema({
     default: 3,
     immutable: true,
   },
-  LRID: {
-    type: ObjectId,
-    ref: 'LeaveReq',
-  },
+  LRID: [
+    {
+      type: ObjectId,
+      ref: 'LeaveReq',
+    },
+  ],
   presentHours: [],
   checkInConfirmed: {
     type: Boolean,
