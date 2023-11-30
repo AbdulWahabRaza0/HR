@@ -10,21 +10,21 @@ const Schema = new mongoose.Schema({
     type: ObjectId,
     ref: 'LeaveReq',
   },
-  presentHours: [
-    {
-      type: String,
-    },
-  ],
+  presentHours: [],
+  checkInConfirmed: {
+    type: Boolean,
+    default: false,
+  },
+  breakOnConfirmed: {
+    type: Boolean,
+    default: false,
+  },
   //to store check in time
   presentHoursTimeStamp: {
     type: Date,
     default: Date.now,
   },
-  breakHour: [
-    {
-      type: String,
-    },
-  ],
+  breakHour: [],
   breakHourTimestamp: {
     type: Date,
     default: Date.now,

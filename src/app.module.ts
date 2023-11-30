@@ -8,6 +8,7 @@ import { ExperienceModule } from './experience/experience.module';
 import { DepartmentModule } from './department/department.module';
 import { CorrectionReqModule } from './correctionReq/correctionReq.module';
 import { DesignationModule } from './designation/designation.module';
+import { TANDAModule } from './timeAndAttendance/tAndA.module';
 import { AuthModule } from './auth/auth.module';
 import 'swagger-ui-dist';
 @Module({
@@ -29,6 +30,7 @@ import 'swagger-ui-dist';
     ExperienceModule,
     CorrectionReqModule,
     DesignationModule,
+    TANDAModule,
   ],
   controllers: [AppController],
   providers: [AppService],

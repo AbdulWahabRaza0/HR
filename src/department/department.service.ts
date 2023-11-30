@@ -9,8 +9,9 @@ export class DepartmentService {
     @InjectModel('Department') private Department: Model<any>,
     private employeeService: EmployeeService,
   ) {}
-  async giveMyDept(id: string) {
+  async giveMyDept(id: any) {
     try {
+      console.log('This is id ', id);
       const myDept = await this.Department.findById(id);
       return myDept;
     } catch (e) {

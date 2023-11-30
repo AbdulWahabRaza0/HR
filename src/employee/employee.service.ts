@@ -296,12 +296,11 @@ export class EmployeeService {
   }
   async giveMyAttendance(eid: any) {
     try {
-      const myAttendance =
-        await this.Employee.findById(eid).populate('TimeAndAttendance');
-      if (!myAttendance) {
+      const myAttendance = await this.Employee.findById(eid);
+      if (!myAttendance?.TAID) {
         return null;
       } else {
-        return myAttendance;
+        return myAttendance.TAID;
       }
     } catch (e) {
       console.log(e);
