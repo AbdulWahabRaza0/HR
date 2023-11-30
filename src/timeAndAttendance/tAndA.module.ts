@@ -1,6 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import TimeAndAttendance from 'src/models/timeAndAttendance,schema';
+import TimeAndAttendance from 'src/models/timeAndAttendance.schema';
 import CorrectionReq from 'src/models/correctionReq.schema';
 import { EmployeeModule } from 'src/employee/employee.module';
 import { TANDAService } from './tAndA.service';
