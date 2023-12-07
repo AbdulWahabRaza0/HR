@@ -39,7 +39,6 @@ export class TANDAController {
   ) {}
   @Get()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get user attendance',
     operationId: 'getAttendance',
@@ -79,8 +78,16 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
+
   @Get('checkin')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Check-in for attendance', operationId: 'checkIn' })
+  @ApiResponse({
+    status: 201,
+    description: 'Check-in successful',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async checkIn(@Req() req: any, @Res() res: Response) {
     try {
       if (!req.user) {
