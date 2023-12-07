@@ -525,6 +525,29 @@ export class TANDAController {
   }
   @Delete('/leave/request/delete')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete a leave request for attendance',
+    operationId: 'deleteLeaveRequest',
+    description: 'Remove a leave request from a specific attendance ID.',
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Attendance ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'lrid',
+    description: 'Leave Request ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request deleted successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async deleteLeaveRequest(
     @Req() req: any,
     @Res() res: Response,
