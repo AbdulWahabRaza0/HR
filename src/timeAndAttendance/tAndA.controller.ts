@@ -149,6 +149,16 @@ export class TANDAController {
 
   @Get('checkout')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Check-out for attendance',
+    operationId: 'checkOut',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Check-out successful',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async checkOut(@Req() req: any, @Res() res: Response) {
     try {
       if (!req.user) {
