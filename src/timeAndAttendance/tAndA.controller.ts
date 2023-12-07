@@ -262,6 +262,16 @@ export class TANDAController {
 
   @Get('breakoff')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'End break for attendance',
+    operationId: 'breakOff',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Break ended successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async breakOff(@Req() req: any, @Res() res: Response) {
     try {
       if (!req.user) {
