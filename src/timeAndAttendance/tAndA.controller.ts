@@ -15,10 +15,10 @@ import {
   ApiOperation,
   //   ApiOkResponse,
   //   ApiBadRequestResponse,
-  //   ApiBody,
+  ApiBody,
   ApiBearerAuth,
   ApiResponse,
-  //   ApiQuery,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
@@ -321,6 +321,24 @@ export class TANDAController {
   }
   @Put('/leave/request')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Submit leave request for attendance',
+    operationId: 'leaveRequest',
+    description: 'Submit a leave request for a specific attendance ID.',
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Attendance ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request submitted successfully',
+    schema: { type: 'object', properties: {} }, // Define the schema as needed
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async leaveRequest(
     @Req() req: any,
     @Res() res: Response,
@@ -359,6 +377,34 @@ export class TANDAController {
   }
   @Put('/leave/request/add')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add a leave request for attendance',
+    operationId: 'addLeaveRequest',
+    description: 'Submit a leave request for a specific attendance ID.',
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Attendance ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        subject: { type: 'string', example: 'Vacation' },
+        description: { type: 'string', example: 'Taking a short break' },
+        duration: { type: 'number', example: 5 },
+      },
+      required: ['subject', 'description', 'duration'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request added successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async addLeaveRequest(
     @Req() req: any,
     @Res() res: Response,
