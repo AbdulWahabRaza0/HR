@@ -447,6 +447,47 @@ export class TANDAController {
   }
   @Put('/leave/request/edit')
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Edit a leave request for attendance',
+    operationId: 'editLeaveRequest',
+    description:
+      'Modify details of a leave request for a specific attendance ID.',
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Attendance ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'lrid',
+    description: 'Leave Request ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'object',
+          properties: {
+            // Include properties that can be edited in the LeaveReq model
+            subject: { type: 'string', example: 'Updated Vacation' },
+            description: { type: 'string', example: 'Updated break details' },
+            duration: { type: 'number', example: 7 },
+          },
+        },
+      },
+      required: ['data'],
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request edited successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async editLeaveRequest(
     @Req() req: any,
     @Res() res: Response,
