@@ -12,12 +12,12 @@ import {
 } from '@nestjs/common';
 import {
   ApiTags,
-  //   ApiOperation,
+  ApiOperation,
   //   ApiOkResponse,
   //   ApiBadRequestResponse,
   //   ApiBody,
   ApiBearerAuth,
-  //   ApiResponse,
+  ApiResponse,
   //   ApiQuery,
 } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -28,7 +28,7 @@ import { TANDAService } from './tAndA.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from 'src/utils/utils';
 @Controller('employee/attendance')
-@ApiTags('Experience')
+@ApiTags('Attendance')
 @ApiBearerAuth('JWT')
 export class TANDAController {
   constructor(
@@ -39,6 +39,18 @@ export class TANDAController {
   ) {}
   @Get()
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get user attendance',
+    operationId: 'getAttendance',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User attendance details',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Attendance not found' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async getAttendance(@Req() req: any, @Res() res: Response) {
     try {
       if (!req.user) {
