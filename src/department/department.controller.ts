@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { EmployeeService } from 'src/employee/employee.service';
 import { Model } from 'mongoose';
-import { modules } from 'src/utils/utils';
+import { modules } from '../utils/utils';
 import { UpdateDeptRequestDto, IdQueryRequestDto } from './department.dtos';
 import { IsBoolean } from 'class-validator';
 @Controller('department')

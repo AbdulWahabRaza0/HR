@@ -32,7 +32,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { Model } from 'mongoose';
-import { modules } from 'src/utils/utils';
+import { modules } from '../utils/utils';
 @Controller('employee/correction/req')
 @ApiTags('Correction Req')
 @ApiBearerAuth('JWT')

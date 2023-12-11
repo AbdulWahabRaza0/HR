@@ -26,7 +26,7 @@ import { Model } from 'mongoose';
 import { EmployeeService } from '../employee/employee.service';
 import { TANDAService } from './tAndA.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
-import { modules } from 'src/utils/utils';
+import { modules } from '../utils/utils';
 @Controller('employee/attendance')
 @ApiTags('Attendance')
 @ApiBearerAuth('JWT')
@@ -335,7 +335,6 @@ export class TANDAController {
   @ApiResponse({
     status: 200,
     description: 'Leave request submitted successfully',
-    schema: { type: 'object', properties: {} }, // Define the schema as needed
   })
   @ApiResponse({ status: 401, description: 'Insufficient details' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
@@ -364,8 +363,8 @@ export class TANDAController {
         throw new Error('Attendance not found');
       }
       const myLeaveRequests = myAttendanceRegister.LRID
-        ? myAttendanceRegister.populate({
-            path: 'LeaveReq',
+        ? await myAttendanceRegister.populate({
+            path: 'LRID',
             options: { strictPopulate: false },
           })
         : [];

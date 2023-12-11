@@ -35,7 +35,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
-import { modules } from 'src/utils/utils';
+import { modules } from '../utils/utils';
 @Controller('employee/experience')
 @ApiTags('Experience')
 @ApiBearerAuth('JWT')

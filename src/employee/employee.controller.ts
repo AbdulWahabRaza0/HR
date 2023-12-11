@@ -14,10 +14,10 @@ import {
 import { Response, Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { EmployeeService } from './employee.service';
-import { DepartmentService } from 'src/department/department.service';
-import { ExperienceService } from 'src/experience/exprience.service';
-import { CorrectionReqService } from 'src/correctionReq/correctionReq.service';
-import { DesignationService } from 'src/designation/designation.service';
+import { DepartmentService } from '../department/department.service';
+import { ExperienceService } from '../experience/exprience.service';
+import { CorrectionReqService } from '../correctionReq/correctionReq.service';
+import { DesignationService } from '../designation/designation.service';
 import {
   CreateUserDto,
   AuthUserDto,

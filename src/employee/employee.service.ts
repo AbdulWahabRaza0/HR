@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
-import { Roles } from 'src/utils/utils';
+import { Roles } from '../utils/utils';
 @Injectable()
 export class EmployeeService {
   constructor(@InjectModel('Employee') private Employee: Model<any>) {}
