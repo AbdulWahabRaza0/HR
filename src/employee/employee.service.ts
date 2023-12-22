@@ -53,10 +53,7 @@ export class EmployeeService {
       //it is not allowed for lower class to register something
       //there is a condition if sub admin is trying to register something
       //then check for it's permissions
-      if (
-        fetchedUser.role <= role &&
-        fetchedUser.role !== Roles.indexOf('subAdmin')
-      ) {
+      if (fetchedUser.role <= role) {
         return {
           status: false,
           error: 'User has no permission to add this user',
@@ -76,10 +73,7 @@ export class EmployeeService {
       }
       //if any sub admin trying to register any employee then
       //check for it's permissions
-      else if (
-        role === Roles.indexOf('employee') &&
-        fetchedUser.role === Roles.indexOf('subAdmin')
-      ) {
+      else if (fetchedUser.role === Roles.indexOf('subAdmin')) {
         const checkPermissions = fetchedUser.moduleAccess;
         if (checkPermissions.includes(moduleNumber)) {
           return { status: true };
@@ -118,18 +112,12 @@ export class EmployeeService {
         };
       }
       const role = myUser.role;
-      if (
-        fetchedUser.role <= role &&
-        fetchedUser.role !== Roles.indexOf('subAdmin')
-      ) {
+      if (fetchedUser.role <= role) {
         return {
           status: false,
           error: 'User has no permission to manipulate this user',
         };
-      } else if (
-        role === Roles.indexOf('employee') &&
-        fetchedUser.role === Roles.indexOf('subAdmin')
-      ) {
+      } else if (fetchedUser.role === Roles.indexOf('subAdmin')) {
         const checkPermissions = fetchedUser.moduleAccess;
         if (checkPermissions.includes(moduleNumber)) {
           return { status: true };
