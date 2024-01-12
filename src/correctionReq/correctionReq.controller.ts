@@ -16,10 +16,9 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.gaurd';
 import { CorrectionReqService } from './correctionReq.service';
 import { EmployeeService } from 'src/employee/employee.service';
 import {
-  CorrectionReqRequestDto,
   EIdQueryRequestDto,
-  CRIDQueryRequestDto,
   ECRIDQueryRequestDto,
+  CorrectionReqDto,
 } from './correctionReq.dtos';
 import {
   ApiTags,
@@ -100,14 +99,8 @@ export class CorrectionReqController {
     schema: {
       type: 'object',
       properties: {
-        data: {
-          type: 'object',
-          properties: {
-            subject: { type: 'string' },
-            description: { type: 'string' },
-            status: { type: 'string' },
-          },
-        },
+        subject: { type: 'string' },
+        description: { type: 'string' },
       },
     },
   })
@@ -129,30 +122,26 @@ export class CorrectionReqController {
   async addCorrection(
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: CorrectionReqRequestDto,
+    @Body() body: CorrectionReqDto,
     @Query() query: EIdQueryRequestDto,
   ) {
     try {
       const { eid } = query;
-      const { data } = body;
-      if (!eid || !data) {
+      const { subject, description } = body;
+      if (!eid || !subject || !description) {
         res.status(401);
         throw new Error('Insufficient data');
       }
       const myEmp = await this.employeeService.giveMyEmployee(eid);
-      if (!myEmp) {
+      if (!myEmp || myEmp.role !== 0) {
         res.status(404);
-        throw new Error('Employee not found');
+        throw new Error('Employee not found or authorized');
       }
-      const obayedRules = await this.employeeService.roleRulesTypical(
-        req,
-        modules.indexOf('correctionReq'),
-      );
-      if (!obayedRules.status) {
-        res.status(401);
-        throw new Error(obayedRules.error);
-      }
-      const myCorrectionReq = await this.CorrectionReq.create(data);
+
+      const myCorrectionReq = await this.CorrectionReq.create({
+        subject,
+        description,
+      });
       await myCorrectionReq.save();
       await myEmp.CRID.push(myCorrectionReq._id);
       await myEmp.save();
@@ -189,6 +178,12 @@ export class CorrectionReqController {
     type: 'string',
     required: true,
   })
+  @ApiQuery({
+    name: 'eid',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
   @ApiResponse({
     status: 201,
     description: 'Successfully updated correction request.',
@@ -201,13 +196,74 @@ export class CorrectionReqController {
   async updateCorrection(
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: CorrectionReqRequestDto,
-    @Query() query: CRIDQueryRequestDto,
+    @Body() body: CorrectionReqDto,
+    @Query() query: ECRIDQueryRequestDto,
+  ) {
+    try {
+      const { crid, eid } = query;
+      const { subject, description } = body;
+      if (!crid || !eid || !subject || !description) {
+        res.status(401);
+        throw new Error('Insufficient data');
+      }
+      const myEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!myEmp || myEmp.role !== 0) {
+        res.status(404);
+        throw new Error('Employee not found or authorized');
+      }
+      const myCorrectionReq = await this.CorrectionReq.findByIdAndUpdate(
+        crid,
+        { subject, description },
+        {
+          new: true,
+        },
+      );
+      await myCorrectionReq.save();
+      res.status(201).json(myCorrectionReq);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('/update/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update correction request status',
+    description: 'Update the status of a correction request.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', enum: [0, 1, 2] },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'crid',
+    description: 'Correction Request ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully updated correction request status.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async updateCorrectionStatus(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: CorrectionReqDto,
+    @Query() query: ECRIDQueryRequestDto,
   ) {
     try {
       const { crid } = query;
-      const { data } = body;
-      if (!crid || !data) {
+      const { status } = body;
+      if (!crid) {
         res.status(401);
         throw new Error('Insufficient data');
       }
@@ -221,7 +277,7 @@ export class CorrectionReqController {
       }
       const myCorrectionReq = await this.CorrectionReq.findByIdAndUpdate(
         crid,
-        data,
+        { status },
         {
           new: true,
         },
@@ -276,17 +332,9 @@ export class CorrectionReqController {
         throw new Error('Insufficient data');
       }
       const myEmp = await this.employeeService.giveMyEmployee(eid);
-      if (!myEmp) {
+      if (!myEmp || myEmp.role !== 0) {
         res.status(404);
         throw new Error('Employee not found');
-      }
-      const obayedRules = await this.employeeService.roleRulesTypical(
-        req,
-        modules.indexOf('correctionReq'),
-      );
-      if (!obayedRules.status) {
-        res.status(401);
-        throw new Error(obayedRules.error);
       }
       const myCorrectionReq = await this.CorrectionReq.findByIdAndDelete(crid);
       if (!myCorrectionReq) {
