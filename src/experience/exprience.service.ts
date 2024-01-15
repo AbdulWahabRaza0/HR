@@ -11,7 +11,10 @@ export class ExperienceService {
   ) {}
   async giveMyExperience(exid: any) {
     try {
-      const myExperience = await this.Experience.findById(exid);
+      const myExperience = await this.Experience.findById(exid)
+        .populate('SKID')
+        .populate('PJID')
+        .populate('TRID');
       return myExperience;
     } catch (e) {
       console.log(e);

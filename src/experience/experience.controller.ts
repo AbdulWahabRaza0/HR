@@ -63,7 +63,10 @@ export class ExperienceController {
   })
   async allExperiences(@Req() req: Request, @Res() res: Response) {
     try {
-      const myExperiences = await this.Experience.find({});
+      const myExperiences = await this.Experience.find({})
+        .populate('SKID')
+        .populate('PJID')
+        .populate('TRID');
       res.status(200).json(myExperiences);
     } catch (e) {
       console.log(e);
@@ -87,6 +90,51 @@ export class ExperienceController {
       const mine = await this.experienceService.giveMyExperience(
         myExmployee.EXID,
       );
+      res.status(200).json(mine);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('/specific')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get user experience',
+    description:
+      'Retrieve the experience of the requested user if you are admin.',
+  })
+  @ApiQuery({
+    name: 'id',
+    type: 'string',
+    description: 'The employee ID as a query parameter',
+    required: true,
+  })
+  @ApiOkResponse({
+    status: 200,
+    description: 'Successfully retrieved user experience.',
+  })
+  @ApiBadRequestResponse({ status: 500, description: 'Internal Server Error.' })
+  async specificExperience(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: EIdQueryRequestDto,
+  ) {
+    const { id } = query;
+    console.log('This is my id ', id);
+    try {
+      if (!id) {
+        res.status(404);
+        throw new Error('Insufficient data');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const mine = await this.experienceService.giveMyExperience(id);
       res.status(200).json(mine);
     } catch (e) {
       console.log(e);
