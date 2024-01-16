@@ -36,6 +36,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from '../utils/utils';
+import { EIdQueryReqDto } from 'src/designation/designation.dtos';
 @Controller('employee/experience')
 @ApiTags('Experience')
 @ApiBearerAuth('JWT')
@@ -393,6 +394,257 @@ export class ExperienceController {
         },
       });
       res.status(201).json(wholeData);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('add/skill')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add skills for the authenticated user',
+    description: 'Add existing skills for the authenticated user.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        skill: {
+          type: 'object',
+          properties: {
+            skillName: { type: 'string' },
+            duration: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'eid',
+    type: 'string',
+    description: 'The Employee id ID to add skill in experience',
+  })
+  @ApiResponse({ status: 201, description: 'Successfully edited skills.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async addSkills(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: SkillReqDto,
+    @Query() query: EIdQueryReqDto,
+  ) {
+    const { eid } = query;
+    const { skill } = body;
+    if (!eid || !skill) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const mineEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!mineEmp) {
+        res.status(404);
+        throw new Error('My employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      if (mineEmp.EXID) {
+        //only push the skill in the experience
+        const addSkill = await this.Skills.create(skill);
+        await addSkill.save();
+        const newExperience = await this.Experience.findById(mineEmp.EXID);
+        newExperience.SKID.push(addSkill._id);
+        await newExperience.save();
+        return res.status(201).json(mineEmp);
+      }
+      const newExperience = new this.Experience();
+      const addSkill = await this.Skills.create(skill);
+      await addSkill.save();
+      newExperience.SKID.push(addSkill);
+      await newExperience.save();
+      mineEmp.EXID.push(newExperience._id);
+      await mineEmp.save();
+      res.status(201).json(mineEmp);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('add/prevjob')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add previous jobs for the authenticated user',
+    description: 'Add existing previous jobs for the authenticated user.',
+  })
+  @ApiQuery({
+    name: 'eid',
+    type: 'string',
+    description: 'The employee ID to add previous job',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        prevJob: {
+          type: 'object',
+          properties: {
+            jobTitle: { type: 'string' },
+            companyName: { type: 'string' },
+            companyContact: { type: 'string' },
+            salary: { type: 'number' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully edited previous jobs.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async addPrevJob(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: PrevJobReqDto,
+    @Query() query: EIdQueryReqDto,
+  ) {
+    const { eid } = query;
+    const { prevJob } = body;
+    if (!eid || !prevJob) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const mineEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!mineEmp) {
+        res.status(404);
+        throw new Error('My employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      if (mineEmp.EXID) {
+        const addPrevJob = await this.PrevJobs.create(prevJob);
+        await addPrevJob.save();
+        const newExperience = await this.Experience.findById(mineEmp.EXID);
+        newExperience.PJID.push(addPrevJob._id);
+        await newExperience.save();
+        return res.status(201).json(mineEmp);
+      }
+      const newExperience = new this.Experience();
+      const addPrevJob = await this.PrevJobs.create(prevJob);
+      await addPrevJob.save();
+      newExperience.PJID.push(addPrevJob._id);
+      await newExperience.save();
+      mineEmp.EXID.push(newExperience._id);
+      await mineEmp.save();
+      res.status(201).json(mineEmp);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+
+  @Put('add/training')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Add training details for the authenticated user',
+    description: 'Add new training details for the authenticated user.',
+  })
+  @ApiQuery({
+    name: 'eid',
+    type: 'string',
+    description: 'The employee id to add the experience training',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        training: {
+          type: 'object',
+          properties: {
+            trainingName: { type: 'string' },
+            instituteName: { type: 'string' },
+            description: { type: 'string' },
+            trainingDuration: { type: 'string' },
+            outcomeDetails: { type: 'string' },
+          },
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully added training details.',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Insufficient details or Invalid Error.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async addTraining(
+    @Req() req: any,
+    @Res() res: Response,
+    @Body() body: TrainingReqDto,
+    @Query() query: EIdQueryReqDto,
+  ) {
+    const { eid } = query;
+    const { training } = body;
+    if (!eid || !training) {
+      res.status(400);
+      throw new Error('insufficient details');
+    }
+    try {
+      const mineEmp = await this.employeeService.giveMyEmployee(eid);
+      if (!mineEmp) {
+        res.status(404);
+        throw new Error('My employee not found');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      if (mineEmp.EXID) {
+        //only push the skill in the experience
+        const addTraining = await this.Trainings.create(training);
+        await addTraining.save();
+        const newExperience = await this.Experience.findById(mineEmp.EXID);
+        await newExperience.TRID.push(addTraining._id);
+        await newExperience.save();
+        return res.status(201).json(mineEmp);
+      }
+      const newExperience = new this.Experience();
+      const addTraining = await this.Trainings.create(training);
+      await addTraining.save();
+      newExperience.TRID.push(addTraining._id);
+      await newExperience.save();
+      mineEmp.EXID.push(newExperience._id);
+      await mineEmp.save();
+      res.status(201).json(mineEmp);
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');

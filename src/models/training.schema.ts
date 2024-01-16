@@ -14,7 +14,7 @@ const Schema = new mongoose.Schema({
   description: {
     type: String,
   },
-  tariningDuration: {
+  trainingDuration: {
     type: String,
   },
   outcomeDetails: {
