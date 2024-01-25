@@ -17,6 +17,11 @@ const Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: Number,
+    default: 0,
+    enum: [0, 1, 2],
+  },
 });
 const LeaveReq = Schema;
 export default LeaveReq;

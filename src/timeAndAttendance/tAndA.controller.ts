@@ -63,11 +63,15 @@ export class TANDAController {
         res.status(401);
         throw new Error(obayedRules.error);
       }
+      const myUser = await this.employeeService.findUserByReq(req);
+      if (!myUser) {
+        return res.status(401).json('User not found');
+      }
       const myAttendance = await this.employeeService.giveMyAttendance(
-        req.user.userId,
+        myUser._id,
       );
       if (!myAttendance) {
-        return res.status(404).json('attendance not found');
+        return res.status(401).json('attendance not found');
       } else {
         const myAttendanceIs =
           await this.TimeAndAttendance.findById(myAttendance);
@@ -319,12 +323,12 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/leave/request')
+  @Put('/specific')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
-    summary: 'Submit leave request for attendance',
-    operationId: 'leaveRequest',
-    description: 'Submit a leave request for a specific attendance ID.',
+    summary: 'get a specific attendance',
+    operationId: 'attendance',
+    description: 'pass a time and attendance parameter to get attendance',
   })
   @ApiQuery({
     name: 'taid',
@@ -338,7 +342,7 @@ export class TANDAController {
   })
   @ApiResponse({ status: 401, description: 'Insufficient details' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
-  async leaveRequest(
+  async getSpecificAttendance(
     @Req() req: any,
     @Res() res: Response,
     @Query() query: any,
@@ -475,6 +479,7 @@ export class TANDAController {
             subject: { type: 'string', example: 'Updated Vacation' },
             description: { type: 'string', example: 'Updated break details' },
             duration: { type: 'number', example: 7 },
+            status: { type: 'number', enum: [0, 1, 2] },
           },
         },
       },

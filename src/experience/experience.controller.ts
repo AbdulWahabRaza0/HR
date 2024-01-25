@@ -691,6 +691,7 @@ export class ExperienceController {
   ) {
     const { sid } = query;
     const { skill } = body;
+
     if (!sid || !skill) {
       res.status(400);
       throw new Error('insufficient details');
@@ -899,6 +900,7 @@ export class ExperienceController {
         res.status(404);
         throw new Error('Insufficient data');
       }
+
       const remSkill = await this.Skills.findOneAndDelete(skid);
       if (remSkill) {
         await this.Experience.findByIdAndUpdate(
