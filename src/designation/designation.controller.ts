@@ -86,6 +86,44 @@ export class DesignationController {
       res.status(500).json('Invalid Error');
     }
   }
+
+  @Put('specific')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get designation',
+    description: 'Get designation associated with the employee id.',
+  })
+  @ApiQuery({
+    name: 'desgid',
+    description: 'Designation id',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved designation.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async specificReq(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    try {
+      const { desgid }: { desgid: string } = query;
+
+      const empDesig = await this.designationService.giveMyDesignation(desgid);
+      if (!empDesig) {
+        res.status(401);
+        throw new Error('Designation not found');
+      }
+      res.status(200).json(empDesig);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+
   @Put('add')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -220,6 +258,7 @@ export class DesignationController {
       res.status(500).json('Invalid Error');
     }
   }
+
   @Delete('/delete')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({

@@ -323,7 +323,7 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/specific')
+  @Put('specific')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'get a specific attendance',
@@ -378,7 +378,7 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/leave/request/add')
+  @Put('leave/request/add')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Add a leave request for attendance',
@@ -448,7 +448,7 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/leave/request/edit')
+  @Put('leave/request/edit')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Edit a leave request for attendance',
@@ -522,6 +522,76 @@ export class TANDAController {
         new: true,
       });
       return res.status(200).json(newLeaveReq);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+  @Put('leave/request/update/status')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Update leave request status',
+    description: 'Update the status of a leave request.',
+  })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'number', enum: [0, 1, 2] },
+      },
+    },
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Time and tracking ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'lrid',
+    description: 'Leave Request Id',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Successfully updated leave request status.',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Insufficient data.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async updateCorrectionStatus(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: { status: number },
+    @Query() query: { lrid: string },
+  ) {
+    try {
+      const { lrid } = query;
+      const { status } = body;
+      if (!lrid) {
+        res.status(401);
+        throw new Error('Insufficient data');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const myTimeAndAttend = await this.LeaveReq.findByIdAndUpdate(
+        lrid,
+        { status },
+        {
+          new: true,
+        },
+      );
+      await myTimeAndAttend.save();
+      res.status(201).json(myTimeAndAttend);
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');

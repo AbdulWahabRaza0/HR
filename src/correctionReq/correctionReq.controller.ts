@@ -60,6 +60,7 @@ export class CorrectionReqController {
       res.status(500).json('Invalid Error');
     }
   }
+
   @Put('/me')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
@@ -89,7 +90,53 @@ export class CorrectionReqController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/add')
+
+  @Put('specific')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get correction requests',
+    description:
+      'Get correction requests associated with the requested employee.',
+  })
+  @ApiQuery({
+    name: 'eid',
+    description: 'Employee ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved correction requests.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async specificReq(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    try {
+      const { eid }: { eid: string } = query;
+      const myExmployee = await this.employeeService.giveMyEmployee(eid);
+      if (!myExmployee) {
+        res.status(401);
+        throw new Error('Employee does not exist');
+      }
+      const myArr = [];
+      if (myExmployee.CRID.length > 0) {
+        for (const crid of myExmployee.CRID) {
+          const mine =
+            await this.correctionReqService.findMyCorrectionReq(crid);
+          myArr.push(mine);
+        }
+      }
+      res.status(200).json(myArr);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+
+  @Put('add')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Add correction request',
@@ -151,7 +198,8 @@ export class CorrectionReqController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/update')
+
+  @Put('update')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Update correction request',
@@ -225,7 +273,8 @@ export class CorrectionReqController {
       res.status(500).json('Invalid Error');
     }
   }
-  @Put('/update/status')
+
+  @Put('update/status')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Update correction request status',
@@ -289,6 +338,7 @@ export class CorrectionReqController {
       res.status(500).json('Invalid Error');
     }
   }
+
   @Delete('/delete')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
