@@ -378,6 +378,36 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Get('leave/request')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'get leave requests for attendance',
+    operationId: 'getLeaveRequest',
+    description: 'getleave request for a specific attendance ID.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request fetched successfully',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Leave request not found',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async getLeaveRequests(@Req() req: any, @Res() res: Response) {
+    try {
+      const myLeaveReq = await this.LeaveReq.find({});
+      if (!myLeaveReq) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+      return res.status(200).json(myLeaveReq);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+
   @Put('leave/request/add')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
