@@ -111,7 +111,10 @@ export class DesignationController {
   ) {
     try {
       const { desgid }: { desgid: string } = query;
-
+      if (!desgid) {
+        res.status(401);
+        throw new Error('Designation id not found');
+      }
       const empDesig = await this.designationService.giveMyDesignation(desgid);
       if (!empDesig) {
         res.status(401);

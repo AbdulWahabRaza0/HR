@@ -231,6 +231,46 @@ export class DepartmentController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Put('specific')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Get specific dept details',
+    description: 'Get department details which you want.',
+  })
+  @ApiQuery({
+    name: 'did',
+    description: 'department id',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved department details.',
+  })
+  @ApiResponse({ status: 500, description: 'Internal Server Error.' })
+  async specificReq(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    try {
+      const { did }: { did: string } = query;
+      if (!did) {
+        res.status(401);
+        throw new Error('department id not found');
+      }
+
+      const deptEmps = await this.Department.findById(did).populate('EID');
+      if (!deptEmps) {
+        res.status(401);
+        throw new Error('Designation not found');
+      }
+      res.status(200).json(deptEmps);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
