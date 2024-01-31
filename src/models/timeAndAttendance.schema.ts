@@ -12,7 +12,22 @@ const Schema = new mongoose.Schema({
       ref: 'LeaveReq',
     },
   ],
-  presentHours: [],
+  presentHours: [
+    {
+      hours: {
+        type: Number,
+        default: 0,
+      },
+      minutes: {
+        type: Number,
+        default: 0,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
   checkInConfirmed: {
     type: Boolean,
     default: false,
@@ -26,7 +41,22 @@ const Schema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  breakHour: [],
+  breakHour: [
+    {
+      hours: {
+        type: Number,
+        default: 0,
+      },
+      minutes: {
+        type: Number,
+        default: 0,
+      },
+      timestamp: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
   breakHourTimestamp: {
     type: Date,
     default: Date.now,

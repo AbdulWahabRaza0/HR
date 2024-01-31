@@ -378,6 +378,61 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'get my attendance',
+    operationId: 'attendance',
+    description: 'get attendance',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leave request submitted successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async getMyAttendance(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+  ) {
+    try {
+      if (!req.user) {
+        res.status(401);
+        throw new Error('Invalid access');
+      }
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
+        req,
+        modules.indexOf('attendance'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+      const myDBUser = await this.employeeService.findUserByReq(req);
+      if (!myDBUser?.TAID) {
+        res.status(401);
+        throw new Error('attendance not found');
+      }
+      const myAttendanceRegister = await this.TimeAndAttendance.findById(
+        myDBUser.TAID,
+      );
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+      const myLeaveRequests = myAttendanceRegister.LRID
+        ? await myAttendanceRegister.populate({
+            path: 'LRID',
+            options: { strictPopulate: false },
+          })
+        : [];
+      return res.status(200).json(myLeaveRequests);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
   @Get('leave/request')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
