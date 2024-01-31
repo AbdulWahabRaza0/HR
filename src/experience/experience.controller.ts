@@ -242,24 +242,32 @@ export class ExperienceController {
         });
         return res.status(201).json(wholeData);
       }
+      // console.log('This is pre jobs ', skills, ' ', prevJobs, ' ', trainings);
+
       const newExperience = new this.Experience();
       for (const skill of skills) {
         const addSkill = await this.Skills.create(skill);
         await addSkill.save();
-        newExperience.SKID.push(addSkill);
-      }
-      for (const training of trainings) {
-        const addTraining = await this.Trainings.create(training);
-        await addTraining.save();
-        newExperience.TRID.push(addTraining);
+        newExperience?.SKID?.push(addSkill._id);
       }
       for (const prevJob of prevJobs) {
         const addPrevJob = await this.PrevJobs.create(prevJob);
         await addPrevJob.save();
-        newExperience.PJID.push(addPrevJob);
+        newExperience?.PJID?.push(addPrevJob._id);
       }
-      await newExperience.save();
+      for (const training of trainings) {
+        const addTraining = await this.Trainings.create(training);
+        await addTraining.save();
+        newExperience?.TRID?.push(addTraining._id);
+      }
 
+      await newExperience.save();
+      // console.log(
+      //   'This is my new experience id ',
+      //   newExperience,
+      //   ' and eid is ',
+      //   mineEmp,
+      // );
       mineEmp.EXID = newExperience._id;
       await mineEmp.save();
       const wholeData = await mineEmp.populate({
@@ -457,23 +465,25 @@ export class ExperienceController {
         res.status(401);
         throw new Error(obayedRules.error);
       }
-      if (mineEmp.EXID) {
+      if (mineEmp?.EXID) {
         //only push the skill in the experience
         const addSkill = await this.Skills.create(skill);
         await addSkill.save();
         const newExperience = await this.Experience.findById(mineEmp.EXID);
-        newExperience.SKID.push(addSkill._id);
+        newExperience?.SKID?.push(addSkill._id);
         await newExperience.save();
         return res.status(201).json(mineEmp);
       }
       const newExperience = new this.Experience();
       const addSkill = await this.Skills.create(skill);
       await addSkill.save();
-      newExperience.SKID.push(addSkill);
+      newExperience.SKID.push(addSkill._id);
       await newExperience.save();
-      mineEmp.EXID.push(newExperience._id);
+      // console.log('This is experience ', newExperience);
+
+      mineEmp.EXID = newExperience._id;
       await mineEmp.save();
-      res.status(201).json(mineEmp);
+      return res.status(201).json(mineEmp);
     } catch (e) {
       console.log(e);
       res.status(500).json('Invalid Error');
@@ -555,7 +565,7 @@ export class ExperienceController {
       await addPrevJob.save();
       newExperience.PJID.push(addPrevJob._id);
       await newExperience.save();
-      mineEmp.EXID.push(newExperience._id);
+      mineEmp.EXID = newExperience._id;
       await mineEmp.save();
       res.status(201).json(mineEmp);
     } catch (e) {
@@ -642,7 +652,7 @@ export class ExperienceController {
       await addTraining.save();
       newExperience.TRID.push(addTraining._id);
       await newExperience.save();
-      mineEmp.EXID.push(newExperience._id);
+      mineEmp.EXID = newExperience._id;
       await mineEmp.save();
       res.status(201).json(mineEmp);
     } catch (e) {

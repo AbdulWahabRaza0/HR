@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
-import { Roles } from '../utils/utils';
+import { Roles, modules } from '../utils/utils';
 @Injectable()
 export class EmployeeService {
   constructor(@InjectModel('Employee') private Employee: Model<any>) {}
@@ -158,6 +158,7 @@ export class EmployeeService {
         };
       }
       const role = myUser.role;
+
       //Role:
       //for role: added condition subadmin cannot change role
       //and requested role cannot be greater than the role of the
@@ -170,7 +171,9 @@ export class EmployeeService {
       if (
         fetchedUser.role <= role || moduleControl === 'module'
           ? role !== Roles.indexOf('subAdmin')
-          : role === Roles.indexOf('subAdmin') && reqRole >= fetchedUser.role
+          : role === Roles.indexOf('subAdmin') &&
+            reqRole >= fetchedUser.role &&
+            myUser.moduleAccess.includes(modules.indexOf('employee'))
       ) {
         return {
           status: false,
