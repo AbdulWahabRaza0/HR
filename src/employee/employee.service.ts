@@ -62,7 +62,8 @@ export class EmployeeService {
       //if admin has not provided any module access to sub admin
       //if any admin tring to add subadmin the check for its module access
       else if (
-        fetchedUser.role === Roles.indexOf('admin') &&
+        (fetchedUser.role === Roles.indexOf('admin') ||
+          fetchedUser.role === Roles.indexOf('superAdmin')) &&
         role === Roles.indexOf('subAdmin') &&
         moduleAccess?.length <= 0
       ) {

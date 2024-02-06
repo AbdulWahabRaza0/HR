@@ -762,9 +762,9 @@ export class TANDAController {
         res.status(401);
         throw new Error('Insufficient data');
       }
-      const obayedRules = await this.employeeService.roleRulesTypical(
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
         req,
-        modules.indexOf('employee'),
+        modules.indexOf('attendance'),
       );
       if (!obayedRules.status) {
         res.status(401);

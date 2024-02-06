@@ -915,7 +915,14 @@ export class ExperienceController {
         res.status(404);
         throw new Error('Insufficient data');
       }
-
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const remSkill = await this.Skills.findOneAndDelete(skid);
       if (remSkill) {
         await this.Experience.findByIdAndUpdate(
@@ -967,6 +974,14 @@ export class ExperienceController {
       if (!exid || !pjid) {
         res.status(404);
         throw new Error('Insufficient data');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
       }
       const removePrevJob = await this.PrevJobs.findOneAndDelete(pjid);
       if (removePrevJob) {
@@ -1020,6 +1035,14 @@ export class ExperienceController {
         res.status(404);
         throw new Error('Insufficient data');
       }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
       const removeTraining = await this.Trainings.findOneAndDelete(tid);
       if (removeTraining) {
         await this.Experience.findByIdAndUpdate(
@@ -1068,6 +1091,14 @@ export class ExperienceController {
       if (!exid) {
         res.status(404);
         throw new Error('Insufficient details');
+      }
+      const obayedRules = await this.employeeService.roleRulesTypical(
+        req,
+        modules.indexOf('employee'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
       }
       const myEmp = await this.employeeService.giveMyEmployee(eid);
       if (myEmp && exid) {
