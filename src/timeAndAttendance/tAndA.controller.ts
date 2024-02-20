@@ -541,6 +541,71 @@ export class TANDAController {
       res.status(500).json('Invalid Error');
     }
   }
+
+  @Delete('specific/delete')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({
+    summary: 'Delete specific attendance',
+    operationId: 'deleteSpecificAttendance',
+    description: 'Remove a specific attendance.',
+  })
+  @ApiQuery({
+    name: 'taid',
+    description: 'Attendance ID',
+    type: 'string',
+    required: true,
+  })
+  @ApiQuery({
+    name: 'phId',
+    description: 'Present hour id',
+    type: 'string',
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'attendance deleted successfully',
+  })
+  @ApiResponse({ status: 401, description: 'Insufficient details' })
+  @ApiResponse({ status: 500, description: 'Internal Server Error' })
+  async deleteSpecificAttendance(
+    @Req() req: any,
+    @Res() res: Response,
+    @Query() query: any,
+    @Body() body: any,
+  ) {
+    try {
+      const { taid, phId } = query;
+
+      if (!req.user || !taid || !phId) {
+        return res.status(401).json('Insufficient details');
+      }
+      const obayedRules = await this.employeeService.roleRulesSubAdminTypical(
+        req,
+        modules.indexOf('attendance'),
+      );
+      if (!obayedRules.status) {
+        res.status(401);
+        throw new Error(obayedRules.error);
+      }
+
+      const myAttendanceRegister =
+        await this.TimeAndAttendance.findByIdAndUpdate(
+          taid,
+          { $pull: { presentHours: { _id: phId } } },
+          { new: true },
+        );
+      if (!myAttendanceRegister) {
+        res.status(401);
+        throw new Error('Attendance not found');
+      }
+
+      return res.status(201).json(myAttendanceRegister);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json('Invalid Error');
+    }
+  }
+
   @Get('leave/request')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
