@@ -22,15 +22,48 @@ const Schema = new mongoose.Schema({
         type: Number,
         default: 0,
       },
+      //copy below given checkin message from the outside checkin message
+      checkInMessage: {
+        type: String,
+        required: true,
+      },
+      checkoutMessage: {
+        type: String,
+        required: true,
+      },
+      shortLeave: {
+        type: Boolean,
+        default: false,
+      },
+      shortLeaveMessage: {
+        type: String,
+        default: '',
+      },
       timestamp: {
         type: Date,
         default: Date.now,
+      },
+      absent: {
+        type: Boolean,
+        default: false,
+      },
+      hrPermission: {
+        type: Boolean,
+        default: false,
+      },
+      teamLeadPermission: {
+        type: Boolean,
+        default: false,
       },
     },
   ],
   checkInConfirmed: {
     type: Boolean,
     default: false,
+  },
+  checkInMessageTemp: {
+    type: String,
+    default: '',
   },
   breakOnConfirmed: {
     type: Boolean,

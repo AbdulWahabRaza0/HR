@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   Delete,
+  Post,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,6 +28,7 @@ import { EmployeeService } from '../employee/employee.service';
 import { TANDAService } from './tAndA.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.gaurd';
 import { modules } from '../utils/utils';
+import { isBoolean } from 'class-validator';
 @Controller('employee/attendance')
 @ApiTags('Attendance')
 @ApiBearerAuth('JWT')
@@ -83,7 +85,7 @@ export class TANDAController {
     }
   }
 
-  @Get('checkin')
+  @Post('checkin')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Check-in for attendance', operationId: 'checkIn' })
   @ApiResponse({
@@ -94,6 +96,11 @@ export class TANDAController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async checkIn(@Req() req: any, @Res() res: Response) {
     try {
+      const { checkInMessage } = req.body;
+      if (!checkInMessage) {
+        res.status(401);
+        throw new Error('Insufficient details');
+      }
       if (!req.user) {
         return res.status(401).json('User not found');
       }
@@ -106,7 +113,6 @@ export class TANDAController {
         throw new Error(obayedRules.error);
       }
       let myAttendance = null;
-      console.log('This is user ', req.user);
       do {
         myAttendance = await this.employeeService.giveMyAttendance(
           req.user.userId,
@@ -142,6 +148,7 @@ export class TANDAController {
       } else {
         myAttendanceRegister.checkInConfirmed = true;
         myAttendanceRegister.presentHoursTimeStamp = Date.now();
+        myAttendanceRegister.checkInMessageTemp = checkInMessage;
         await myAttendanceRegister.save();
         return res.status(201).json(myAttendanceRegister);
       }
@@ -151,7 +158,7 @@ export class TANDAController {
     }
   }
 
-  @Get('checkout')
+  @Post('checkout')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'Check-out for attendance',
@@ -165,6 +172,20 @@ export class TANDAController {
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async checkOut(@Req() req: any, @Res() res: Response) {
     try {
+      const {
+        checkoutMessage,
+        hrPermission,
+        teamLeadPermission,
+        shortLeaveMessage,
+      } = req.body;
+      if (
+        !checkoutMessage ||
+        !isBoolean(hrPermission) ||
+        !isBoolean(teamLeadPermission)
+      ) {
+        res.status(401);
+        throw new Error('Insufficient details');
+      }
       if (!req.user) {
         return res.status(401).json('User not found');
       }
@@ -194,14 +215,31 @@ export class TANDAController {
       if (!myAttendanceRegister.checkInConfirmed) {
         return res.status(401).json('please do check out before checkin');
       } else {
-        myAttendanceRegister.checkInConfirmed = false;
         const myLastTimeStamp = myAttendanceRegister.presentHoursTimeStamp;
         const currentTimeStamp = Date.now();
-        const myHoursAndMins = this.tAndAService.calculateTimeDifference(
+        const myHoursAndMins: any = this.tAndAService.calculateTimeDifference(
           myLastTimeStamp,
           currentTimeStamp,
         );
+        //add some data here like check in, absent and short leave things etc.
+        if (myHoursAndMins.hours < 8) {
+          //if any employee has checkout before 8 hours then count it as short leave
+          //if any employee is on short leave then it is compulsory to take permission from team lead and HR
+          myHoursAndMins.checkInMessage =
+            myAttendanceRegister.checkInMessageTemp;
+          myHoursAndMins.checkoutMessage = checkoutMessage;
+          myHoursAndMins.hrPermission = hrPermission;
+          myHoursAndMins.teamLeadPermission = teamLeadPermission;
+          myHoursAndMins.shortLeaveMessage = shortLeaveMessage;
+          myHoursAndMins.shortLeave = true;
+        } else {
+          myHoursAndMins.checkInMessage =
+            myAttendanceRegister.checkInMessageTemp;
+          myHoursAndMins.checkoutMessage = checkoutMessage;
+        }
         myAttendanceRegister.presentHours.push(myHoursAndMins);
+        myAttendanceRegister.checkInConfirmed = false;
+
         await myAttendanceRegister.save();
         return res.status(201).json(myAttendanceRegister);
       }
@@ -211,7 +249,7 @@ export class TANDAController {
     }
   }
 
-  @Get('absent')
+  @Post('absent')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({
     summary: 'absent for attendance',
@@ -224,6 +262,15 @@ export class TANDAController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 500, description: 'Internal Server Error' })
   async absent(@Req() req: any, @Res() res: Response) {
+    const { absentMessage, hrPermission, teamLeadPermission } = req.body;
+    if (
+      !absentMessage ||
+      !isBoolean(hrPermission) ||
+      !isBoolean(teamLeadPermission)
+    ) {
+      res.status(401);
+      throw new Error('Insufficient details');
+    }
     try {
       if (!req.user) {
         return res.status(401).json('User not found');
@@ -258,6 +305,11 @@ export class TANDAController {
         hours: 0,
         minutes: 0,
         timestamp: Date.now(),
+        checkInMessage: 'I am absent',
+        checkoutMessage: absentMessage,
+        hrPermission,
+        teamLeadPermission,
+        absent: true,
       });
       await myAttendanceRegister.save();
       return res.status(201).json(myAttendanceRegister);
